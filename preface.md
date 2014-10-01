@@ -1,16 +1,14 @@
-\frontmatter
-
-# まえがき {-}
+# まえがき
 これはFlaskの実践的な用例をまとめた本です。
 一般的なFlaskアプリケーションを開発する際、ユーザー認証やデータベースとの連携など、多くのモジュールを利用する必要があるでしょう。
 この本ではこれらの「正しい利用方法」を解説します。
 私はこのやり方を常に推奨するわけではありませんが、多くの場合において正しい選択だと願っています。
 
-## 前提条件 {-}
+## 前提条件
 具体的なアドバイスを行うために、私は幾つかの前提に基づいてこの本を書いています。
 この本に書いてあることを、実際のプロジェクトで利用する際には前提条件が合っているかを十分確認してください。
 
-### 対象読者 {-}
+### 対象読者
 この本の内容は、公式ドキュメントに書かれている情報を基にしています。
 事前に[ユーザーガイド](http://flask.pocoo.org/docs/#user-s-guide)と[チュートリアル](http://flask.pocoo.org/docs/tutorial/)を読んでFlaskの用語に慣れておくことを推奨します。
 また、ビューやJinjaテンプレートなどの基礎的な概念を知っておくと良いでしょう。
@@ -21,9 +19,9 @@
 公式ドキュメントとの重複を避けるために、あなたがその概念を既に知っているかどうかを繰り返し確認しています。
 この本を読むにあたって、初心者向けのチュートリアル本を持っている必要はありません。
 
-### バージョン {-}
+### バージョン
 
-#### Python 2 と Python 3 {-}
+#### Python 2 と Python 3
 
 これを書いている時点で、PythonコミュニティはPython 2からPython 3への移行を行っている最中です。
 Python Software Foundationの公式な立場は以下の通りです。
@@ -50,11 +48,11 @@ Pytho3でFlaskアプリケーションを開発しようとすると、幾つか
 具体的にはPython 2.7を利用してこの本を書いています。
 今後のFlaskコミュニティの動向に応じて更新することもあるかもしれませんが、今の所Python 2.7を利用します。
 
-#### Flask バージョン 0.10 {-}
+#### Flask バージョン 0.10
 この本を書いている時点でのFlaskの最新バージョンは(0.10.1)でした。
 Flaskのマイナーアップデートが行われた際にこの本に細かな変更を行うことはありませんので心に留めいておいてください。
 
-## 生きた文書 {-}
+## 生きた文書
 この本は定期的に新しいバージョンを出版するというよりも、臨機応変に内容を更新していきます。
 紙の本で出版するよりもWEBの方が配布に適した流通経路でしょう。
 
@@ -62,34 +60,33 @@ Flaskのマイナーアップデートが行われた際にこの本に細かな
 
 訳注: 翻訳本のソースは[こちら](https://github.com/hamano/explore-flask-ja)
 
-## この本の構成 {-}
+## この本の構成
 
-### 各章は独立しています {-}
+### 各章は独立しています
 多くの本やチュートリアルはひと繋ぎの長いレッスンとして書かれていますが、この本の各章はそれぞれ独立したレッスンになっています。
 各章ではFlaskの概念を学ぶためにサンプルコードを示していますが、他の章のサンプルコードと組み合わせて大きなアプリケーションをつくるというわけではありません。
 
-### 書式 {-}
+### 書式
 脚注はなにかを引用する際に利用します。[^3]
 
 *イタリック* はファイル名を示す際に利用します。
 
 **太字** は新しい用語または重要な単語に利用します。
 
-~~~ {caption="警告"}
-Common pitfalls that could cause major problems will be shown in a
-warning box.
-~~~
+*警告*
 
-~~~ {caption="ノート"}
-Supplemental information will appear in note boxes.
-~~~
+大きな問題を引き起こす落とし穴がある場合は警告で表示します。
 
-## イースター・エッグ {-}
+*注記*
+
+補足的な情報は注記で表示します。
+
+## イースター・エッグ
 Six backer names from the Kickstarter campaign have been encoded and
 sprinkled around the book. If you find all six and email the locations
 to me, I'll send you an extraordinarily mediocre prize. No hints.
 
-## まとめ {-}
+## まとめ
 
 - この本にはFlaskの推奨例が書かれています。
 - チュートリアルは既に読んでいると期待しています。
@@ -105,3 +102,4 @@ to me, I'll send you an extraordinarily mediocre prize. No hints.
 [^2]: [My conversation with Armin Ronacher](https://www.youtube.com/watch?feature=player_detailpage&v=fs20qdvm0K4#t=190)
 
 [^3]: See, it *must* be true!
+

@@ -1,5 +1,3 @@
-\mainmatter
-
 # コーディング規約
 
 ![コーディング規約](./images/conventions.eps)
@@ -49,12 +47,11 @@ def launch_rocket():
 docstringsはSphinxなどのソフトウェアを利用してHTMLやPDFフォーマットのドキュメントを生成出来ます。
 このようなドキュメントはコードを理解するのに役立ちます。
 
-> **ノート**
->
-> -   [PEP 8](http://legacy.python.org/dev/peps/pep-0008/)
-> -   [PEP 257](http://legacy.python.org/dev/peps/pep-0257/)
-> -   [Sphinx](http://sphinx-doc.org/), the documentation generator
->     created by the same folks who brought us Flask
+*注記*
+
+-   [PEP 8](http://legacy.python.org/dev/peps/pep-0008/)
+-   [PEP 257](http://legacy.python.org/dev/peps/pep-0257/)
+-   [Sphinx](http://sphinx-doc.org/)
 
 ## 相対インポート
 相対インポートを利用すると、Flaskアプリの開発が少し楽になります。
@@ -69,7 +66,7 @@ docstringsはSphinxなどのソフトウェアを利用してHTMLやPDFフォー
 します。
 以下に例を示します。
 
-~~~ Python
+~~~ python
 # myapp/views.py
 
 # An absolute import gives us the User model
@@ -86,14 +83,14 @@ from .models import User
 調べてみると、以下のtweetが見つかりました。
 
 > パッケージの相対インポートを使ったら、1秒でパッケージ名を変更できたぜ
-
+> 
 > --- [David Beazley,
 > @dabeaz](https://twitter.com/dabeaz/status/372059407711887360)
 
-> **ノート**
->
-> 相対インポートの詳しい構文が知りたい場合は以下の項目を参照して下さい。
-> [PEP328](http://www.python.org/dev/peps/pep-0328/#guido-s-decision).
+*注記*
+
+相対インポートの詳しい構文が知りたい場合は以下の項目を参照して下さい。
+[PEP328](http://www.python.org/dev/peps/pep-0328/#guido-s-decision).
 
 ## まとめ
 - 出来るだけPEP 8のコーディングスタイルガイドに従ってください。
