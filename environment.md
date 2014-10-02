@@ -39,7 +39,7 @@ virtualenvではパッケージをシステムディレクトリ、またはユ�
 引き数には作成する仮想環境の対象ディレクトリを指定します。
 以下に実行例を示します。
 
-~~~ {style=command}
+~~~ {language=command}
 $ virtualenv venv
 New python executable in venv/bin/python
 Installing Setuptools...........[...].....done.
@@ -51,7 +51,7 @@ Installing Pip..................[...].....done.
 新しい仮想環境を有効にする為には、仮想環境内に配置されている
 *bin/activate* スクリプトを読み込む必要があります。
 
-~~~ {style=command}
+~~~ {language=command}
 $ which python
 /usr/local/bin/python
 $ source venv/bin/activate
@@ -72,7 +72,7 @@ virtualenvはシェルプロンプトに現在有効になっている仮想環�
 します。
 `deactivate`コマンドを実行することで仮想環境を無効化できます。
 
-~~~ {style=command}
+~~~ {language=command}
 (venv)$ deactivate
 $
 ~~~
@@ -96,7 +96,7 @@ virtualenvwrapperをインストールする前に全ての仮想環境を無効
 `virtualenv`コマンドの代わりに`mkvirtualenv`コマンドを実行して環境を作
 成します。
 
-~~~ {style=command}
+~~~ {language=command}
 $ mkvirtualenv rocket
 New python executable in rocket/bin/python
 Installing setuptools...........[...].....done.
@@ -109,31 +109,35 @@ Installing pip..................[...].....done.
 先ほどの`virtualenv`と同様に、`python`や`pip`コマンドは仮想環境内のコマ
 ンドに切り替わります。
 仮想環境を有効化するには、`workon [環境名]`を実行します。
-無効化するには先ほどと同様に`deactivate`コマンドです。
+無効化するには先ほどと同様に`deactivate`コマンドを実行します。
 
-### Keeping track of dependencies
-As a project grows, you'll find that the list of dependencies grows with
-it. It's not uncommon to need dozens of Python packages installed to run
-a Flask application. The easiest way to manage these is with a simple
-text file. Pip can generate a text file listing all installed packages.
-It can also read in this list to install each of them on a new system,
-or in a freshly minted environment.
+### 依存関係を維持する
+プロジェクトが大きくなるにつれて、依存関係も増えていることを経験したこ
+とがあるでしょう。
+Flaskアプリケーションを実行するために数十個の依存ライブラリが必要になる
+ことも珍しくありません。
+これらの依存関係を管理する最も単純な方法はテキストファイルに記述するこ
+とです。
+pipはインストール済みのパッケージをテキストファイルで出力できます。
+新しい環境にこれらのパッケージをインストールする際には、このテキストファ
+イルを読み込むだけで済みます。
 
 #### pip freeze
+*requirements.txt*はFlaskアプリケーションの実行に必要な全てのパッケージ
+ が記述されているテキストファイルです。
+以下に、このファイルの生成方法と、新しい環境テキストファイルから依存パッ
+ケージをインストールする例を示します。
 
-*requirements.txt* is a text file used by many Flask applications to
-list all of the packages needed to run an application. This code block
-shows how to create this file and the following one shows how to use
-that text file to install your dependencies in a new environment.
+~~~ {language=command}
+(rocket)$ pip freeze > requirements.txt
 
-    (rocket)$ pip freeze > requirements.txt
-
-    $ workon fresh-env
-    (fresh-env)$ pip install -r requirements.txt
-    [...]
-    Successfully installed flask Werkzeug Jinja2 itsdangerous markupsafe
-    Cleaning up...
-    (fresh-env)$
+$ workon fresh-env
+(fresh-env)$ pip install -r requirements.txt
+[...]
+Successfully installed flask Werkzeug Jinja2 itsdangerous markupsafe
+Cleaning up...
+(fresh-env)$
+~~~
 
 ### Manually tracking dependencies
 
@@ -146,8 +150,7 @@ dependencies as you add them. You can separate those packages needed to
 run your application and those needed to develop your application into
 *require\_run.txt* and *require\_dev.txt* respectively.
 
-Version control
----------------
+## バージョン管理
 
 Pick a version control system and use it. I recommend Git. From what
 I've seen, Git is the most popular choice for new projects these days.
@@ -198,48 +201,41 @@ about them later.
 > You can read more about *.gitignore* here:
 > <http://git-scm.com/docs/gitignore>
 
-Debugging
----------
+## デバッグ
 
-### Debug Mode
+### デバッグモード
+Flaskはデバッグモードと呼ばれる機能を持っています。
+開発環境で`debug = True`と設定するとデバッグモードが有効になります。
+デバッグモードではコードの変更を検知して自動的に再読み込みを行い、エラー
+が発生した場合はスタックトレースを出力し、インタラクティブコンソールを
+利用できます。
 
-Flask comes with a handy feature called debug mode. To turn it on, you
-just have to set `debug = True` in your development configuration. When
-it's on, the server will reload on code changes and errors will come
-with a stack trace and an interactive console.
+**警告**
 
-> **warning**
->
-> Take care not to enable debug mode in production. The interactive
-> console enables arbitrary code execution and would be a massive
-> security vulnerability if it was left on in the live site.
+本番環境でデバッグモードを有効にしないよう注意して下さい。
+インタラクティブコンソールは任意のコードを実行できるため、本番環境では重大なセキュリティホールとなってしまいます。
 
 ### Flask-DebugToolbar
-
 [Flask-DebugToolbar](http://flask-debugtoolbar.readthedocs.org/en/latest/)
-is another great tool for debugging problems with your application. In
-debug mode, it overlays a side-bar onto every page in your application.
-The side bar gives you information about SQL queries, logging, versions,
-templates, configuration and other fun stuff that makes it easier to
-track down problems.
+は、アプリケーションの問題をデバッグするためのもうひとつのツールです。
+デバッグモードでこれを利用すると、アプリケーションにサイドバーが設置さ
+れます。
+サイドバーにはSQLクエリやログ、バージョン、テンプレート、設定などその他
+愉快な情報が表示され、問題を追跡し易くなります。
 
-> **note**
->
-> -   Take a look at the quick start [section on debug
->     mode](http://flask.pocoo.org/docs/quickstart/#debug-mode).
-> -   There is some good information on handling errors, logging and
->     working with other debuggers [in the flask
->     docs](http://flask.pocoo.org/docs/errorhandling).
+**注記**
 
-Summary
--------
+- 詳しくはこちらのクイックスタートを読んでください。
+  <http://flask.pocoo.org/docs/quickstart/#debug-mode>
+- こちらに他のデバッガを利用したエラー処理とロギングについての情報があります。
+  <http://flask.pocoo.org/docs/errorhandling>
 
--   Use virtualenv to keep your application's dependencies together.
--   Use virtualenvwrapper to keep your virtual environments together.
--   Keep track of dependencies with one or more text files.
--   Use a version control system. I recommend Git.
--   Use .gitignore to keep clutter and secrets out of version control.
--   Debug mode can give you information about problems in development.
--   The Flask-DebugToolbar extension will give you even more of that
-    information.
+## まとめ
+- アプリケーションの依存関係を維持するためにvirtualenvを利用して下さい。
+- 仮想環境を維持するためにvirtualenvwrapperを利用して下さい。
+- 依存関係はテキストファイルで管理して下さい。
+- バージョン管理システムはGitを推奨します。
+- バージョン管理システムから秘密のファイルを除外するために.gitignoreを利用して下さい。
+- デバッグモードで問題解決に必要な情報を得ることが出来ます。
+- Flask-DebugToolbar拡張はもっと詳細な情報を得ることが出来ます。
 

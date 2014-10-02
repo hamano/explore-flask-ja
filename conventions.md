@@ -47,7 +47,7 @@ def launch_rocket():
 docstringsはSphinxなどのソフトウェアを利用してHTMLやPDFフォーマットのドキュメントを生成出来ます。
 このようなドキュメントはコードを理解するのに役立ちます。
 
-*注記*
+**注記**
 
 -   [PEP 8](http://legacy.python.org/dev/peps/pep-0008/)
 -   [PEP 257](http://legacy.python.org/dev/peps/pep-0257/)
@@ -87,7 +87,7 @@ from .models import User
 > --- [David Beazley,
 > @dabeaz](https://twitter.com/dabeaz/status/372059407711887360)
 
-*注記*
+**注記**
 
 相対インポートの詳しい構文が知りたい場合は以下の項目を参照して下さい。
 [PEP328](http://www.python.org/dev/peps/pep-0328/#guido-s-decision).
