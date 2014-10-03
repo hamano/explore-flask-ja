@@ -139,49 +139,48 @@ Cleaning up...
 (fresh-env)$
 ~~~
 
-### Manually tracking dependencies
-
-As your project grows, you may find that certain packages listed by
-`pip freeze` aren't actually needed to run the application. You'll have
-packages that are installed for development only. `pip freeze` doesn't
-discriminate between the two, it just lists the packages that are
-currently installed. As a result, you may want to manually track your
-dependencies as you add them. You can separate those packages needed to
-run your application and those needed to develop your application into
-*require\_run.txt* and *require\_dev.txt* respectively.
+### 依存パッケージの管理
+プロジェクトが大きくなると、`pip freeze`の出力にアプリケーションの実行
+には必要の無い依存パッケージが含まれてしまう事があるかもしれません。
+開発時のみに利用するパッケージなどがそうです。`pip freeze`は実行時に必
+要なパッケージと開発時に必要なパッケージを区別せず、単純に現在インストー
+ルされているパッケージを出力します。
+従って、ある程度は手動で依存関係をメンテナンスする必要があります。
+例えば、*require\_run.txt*というファイルと*require\_dev.txt*というファ
+イルに分けて依存パッケージを管理しても良いでしょう。
 
 ## バージョン管理
-
-Pick a version control system and use it. I recommend Git. From what
-I've seen, Git is the most popular choice for new projects these days.
-Being able to delete code without worrying about making an irreversible
-mistake is invaluable. You'll be able to keep your project free of those
-massive blocks of commented out code, because you can delete it now and
-revert that change later should the need arise. Plus, you'll have backup
-copies of your entire project on GitHub, Bitbucket or your own Gitolite
-server.
+なんらかのバージョン管理システムを使ってください。
+私ならGitを推奨します。
+私の知る限り、Gitは近年最も多くのプロジェクトで採用されています。
+バージョン管理を行うと、やり直しのできないミスを心配すること無く、コードの削除などの操作を行うことができます。
+コードを削除してもrevertして元に戻せるので、大量のコメントアウトされた
+コードブロックに悩む必要がなくなります。
+さらに、GitHubやBitbucket、あるいは自前のGitoliteサーバーなどに完全なバッ
+クアップを持つことができます。
 
 ### What to keep out of version control
+例外的にバージョン管理を行わない方が良いファイルもあります。
+雑多なファイルや秘密のファイルなどです。
+コンパイル済みの*.pyc*ファイルやvirtualenv環境(virtualenvwrapperを利用
+していない場合)などは雑多なファイルであり、バージョン管理の必要はありま
+せん。
+*.pyc*ファイルは*.py*ファイルから生成物であり、virtualenv環境は
+ *requirements.txt*ファイルから生成できるからです。
 
-I usually keep a file out of version control for one of two reasons.
-Either it's clutter, or it's a secret. Compiled *.pyc* files and virtual
-environments --- if you're not using virtualenvwrapper for some reason
---- are examples of clutter. They don't need to be in version control
-because they can be recreated from the *.py* files and your
-*requirements.txt* files respectively.
+APIキーやアプリケーションの秘密鍵、データーベース接続のパスワードは、秘
+密のファイルです。
+これらのファイルが人前に晒されると、重大なセキュリティ上の脅威となりま
+すので秘密のファイルをバージョンコントロール下に置いてはいけません。
 
-API keys, application secret keys and database credentials are examples
-of secrets. They shouldn't be in version control because their exposure
-would be a massive breach of security.
+**注記**
 
-> **note**
->
-> When making security related decisions, I always like to assume that
-> my repository will become public at some point. This means keeping
-> secrets out and never assuming that a security hole won't be found
-> because, "Who's going to guess that they can do that?" This kind of
-> assumption is known as security by obscurity and it's a bad policy to
-> rely on.
+When making security related decisions, I always like to assume that
+my repository will become public at some point. This means keeping
+secrets out and never assuming that a security hole won't be found
+because, "Who's going to guess that they can do that?" This kind of
+assumption is known as security by obscurity and it's a bad policy to
+rely on.
 
 When using Git, you can create a special file called *.gitignore* in
 your repository. In it, list wildcard patterns to match against
