@@ -174,31 +174,32 @@ APIキーやアプリケーションの秘密鍵、データーベース接続�
 すので秘密のファイルをバージョンコントロール下に置いてはいけません。
 
 **注記**
+私はいつもプラーベートレポジトリであってもいつか公開される可能性がある
+と仮定してセキュリティポリシーを策定します。
+これは秘密が流出するようなセキュリティホールを無くすことは出来ないと
+いう前提に基づいています。そのような事は誰も保証できません。
+この様に、隠すことに依存したセキュリティポリシーは悪手であるとされて
+います。
 
-When making security related decisions, I always like to assume that
-my repository will become public at some point. This means keeping
-secrets out and never assuming that a security hole won't be found
-because, "Who's going to guess that they can do that?" This kind of
-assumption is known as security by obscurity and it's a bad policy to
-rely on.
+Gitを利用する場合、レポジトリに*.gitignore*と呼ばれるファイルを作成する
+事で、ワイルドカードにマッチしたファイルをレポジトリから除外することが
+出来ます。
+まずは以下のファイルを除外することを推奨します。
 
-When using Git, you can create a special file called *.gitignore* in
-your repository. In it, list wildcard patterns to match against
-filenames. Any filename that matches one of the patterns will be ignored
-by Git. I recommend using the *.gitignore* shown in Listing\~ to get you
-started.
+~~~
+*.pyc
+instance/
+~~~~
 
-    *.pyc
-    instance/
+*instance/*フォルダは、秘密を含む設定を格納し、より安全にアプリケーショ
+ ンを動作させる為に利用します。
+これについては後ほど説明します。
 
-Instance folders are used to make secret configuration variables
-available to your application in a more secure way. We'll talk more
-about them later.
+**注記**
 
-> **note**
->
-> You can read more about *.gitignore* here:
-> <http://git-scm.com/docs/gitignore>
+*.gitignore*の詳細はこちらを参照して下さい。
+
+<http://git-scm.com/docs/gitignore>
 
 ## デバッグ
 
