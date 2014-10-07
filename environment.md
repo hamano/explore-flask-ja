@@ -159,7 +159,7 @@ Cleaning up...
 さらに、GitHubやBitbucket、あるいは自前のGitoliteサーバーなどに完全なバッ
 クアップを持つことができます。
 
-### What to keep out of version control
+### バージョン管理からの除外
 例外的にバージョン管理を行わない方が良いファイルもあります。
 雑多なファイルや秘密のファイルなどです。
 コンパイル済みの*.pyc*ファイルやvirtualenv環境(virtualenvwrapperを利用
