@@ -74,16 +74,15 @@ BCRYPT\_LEVEL
 これが設定されていると、外部から任意のPythonコードを実行可能です。
 
 ## インスタンスフォルダ
-
-Sometimes you'll need to define configuration variables that contain
-sensitive information. We'll want to separate these variables from those
-in *config.py* and keep them out of the repository. You may be hiding
-secrets like database passwords and API keys, or defining variables
-specific to a given machine. To make this easy, Flask gives us a feature
-called **instance folders**. The instance folder is a sub-directory of
-the repository root and contains a configuration file specifically for
-this instance of the application. We don't want to commit it into
-version control.
+設定値には繊細な情報を含むことがあります。
+これらの設定値は*config.py*から分離し、バージョン管理から除外したいと思うでしょう。
+データーベースのパスワードやAPIキーに加え、特定の実行マシンに関する設定
+値も除外したいはずです。
+この様なことを簡単にする為に、Flaskには**インスタンスフォルダ**という機
+能が提供されています。
+インスタンスフォルダはレポジトリの直下に配置されるサブフォルダであり、
+特定のアプリケーションのインスタンスに関する設定が格納されます。
+このインスタンスフォルダはバージョン管理から除外します。
 
 ~~~
 config.py
@@ -100,68 +99,74 @@ yourapp/
 ~~~
 
 ### インスタンスフォルダの利用
+インスタンスフォルダ内の設定値を読み込むには、
+`app.config.from_pyfile()`を利用します。
+アプリケーションを作成する`Flask()`の呼び出し時に
+`instance_relative_config=True`を指定すると、
+`app.config.from_pyfile()`は*instance/*ディレクトリからの相対的なファイ
+ル名を指定できます。
 
-To load configuration variables from an instance folder, we use
-`app.config.from_pyfile()`. If we set `instance_relative_config=True`
-when we create our app with the `Flask()` call,
-`app.config.from_pyfile()` will load the specified file from the
-*instance/* directory.
+~~~ {language="Python"}
+# app.py もしくは app/__init__.py
 
-    # app.py or app/__init__.py
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_object('config')
+app.config.from_pyfile('config.py')
+~~~
 
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_object('config')
-    app.config.from_pyfile('config.py')
+*instance/config.py*には*config.py*.と同じように設定値を定義することが
+できます。
+また、インスタンスフォルダはバージョン管理システムから除外する必要があ
+ります。
+Gitを利用している場合、*.gitignore*に`instance/`を追記します。
 
-Now, we can define variables in *instance/config.py* just like you did
-in *config.py*. You should also add the instance folder to your version
-control system's ignore list. To do this with Git, you would add
-`instance/` on a new line in *.gitignore*.
+### 秘密鍵
+インスタンスフォルダはバージョン管理から除外したい設定値を格納するのに
+最適です。
+これにはアプリケーションの秘密鍵やサードパーティのAPIキーを含むことがで
+きます。
+これはアプリケーションがオープンソース・ソフトウェアである場合や将来的
+に公開しようと考えている場合は特に重要です。
+通常、その他のユーザーや開発者は自身の鍵を利用するはずです。
 
-### Secret keys
+~~~ {language="Python"}
+# instance/config.py
 
-The private nature of the instance folder makes it a great candidate for
-defining keys that you don't want exposed in version control. These may
-include your app's secret key or third-party API keys. This is
-especially important if your application is open source, or might be at
-some point in the future. We usually want other users and contributors
-to use their own keys.
+SECRET_KEY = 'Sm9obiBTY2hyb20ga2lja3MgYXNz'
+STRIPE_API_KEY = 'SmFjb2IgS2FwbGFuLU1vc3MgaXMgYSBoZXJv'
+SQLALCHEMY_DATABASE_URI= \
+"postgresql://user:TWljaGHFgiBCYXJ0b3N6a2lld2ljeiEh@localhost/databasename"
+~~~
 
-    # instance/config.py
+### 環境ごとの設定
+本番環境や開発環境の違いが軽微であれば、インスタンスフォルダを利用して
+設定を切り替えても良いでしょう。
+*instance/config.py*に定義された設定値は*config.py*の設定値を上書きする
+ ことができます。
+これを行うには`app.config.from_object()`を呼び出した後に
+`app.config.from_pyfile()`を呼び出すだけです。
+これはあなたのアプリケーションを異なるマシンで動作させる為の良い方法です。
 
-    SECRET_KEY = 'Sm9obiBTY2hyb20ga2lja3MgYXNz'
-    STRIPE_API_KEY = 'SmFjb2IgS2FwbGFuLU1vc3MgaXMgYSBoZXJv'
-    SQLALCHEMY_DATABASE_URI= \
-    "postgresql://user:TWljaGHFgiBCYXJ0b3N6a2lld2ljeiEh@localhost/databasename"
+~~~ {language="Python"}
+# config.py
 
-### Minor environment-based configuration
+DEBUG = False
+SQLALCHEMY_ECHO = False
+~~~
 
-If the difference between your production and development environments
-are pretty minor, you may want to use your instance folder to handle the
-configuration changes. Variables defined in the *instance/config.py*
-file can override the value in *config.py*. You just need to make the
-call to `app.config.from_pyfile()` after `app.config.from_object()`. One
-way to take advantage of this is to change the way your app is
-configured on different machines.
+~~~ {language="Python"}
+# instance/config.py
 
-    # config.py
+DEBUG = True
+SQLALCHEMY_ECHO = True
+~~~
 
-    DEBUG = False
-    SQLALCHEMY_ECHO = False
+本番環境では*instance/config.py*は除外され、*config.py*のみが有効になります。
 
+**注記**
 
-    # instance/config.py
-    DEBUG = True
-    SQLALCHEMY_ECHO = True
-
-In production, we would leave the variables in Listing\~ out of
-*instance/-config.py* and it would fall back to the values defined in
-*config.py*.
-
-> **note**
->
-> -   Read more about Flask-SQLAlchemy's [configuration
->     keys](http://pythonhosted.org/Flask-SQLAlchemy/config.html#configuration-keys)
+- Flask-SQLAlchemyについてはこちらを参照して下さい。
+  [configuration keys](http://pythonhosted.org/Flask-SQLAlchemy/config.html#configuration-keys)
 
 Configuring based on environment variables
 ------------------------------------------
@@ -178,24 +183,26 @@ several configuration files in our repository and always load the right
 one. Once we have several configuration files, we can move them to their
 own `config` directory.
 
-    requirements.txt
-    run.py
-    config/
-      __init__.py # Empty, just here to tell Python that it's a package.
-      default.py
-      production.py
-      development.py
-      staging.py
-    instance/
-      config.py
-    yourapp/
-      __init__.py
-      models.py
-      views.py
-      static/
-      templates/
+~~~
+requirements.txt
+run.py
+config/
+  __init__.py # パッケージを意味するただの空ファイルです。
+  default.py
+  production.py
+  development.py
+  staging.py
+instance/
+  config.py
+yourapp/
+  __init__.py
+  models.py
+  views.py
+  static/
+  templates/
+~~~
 
-In this listing we have a few different configuration files.
+この例では複数の設定ファイルがあります。
 
   ---------------- -------------------------------------------------------
   config/default.p Default values, to be used for all environments or
@@ -252,10 +259,9 @@ can set up a shell script that sets our environment variables and runs
 version control. On Heroku, we'll want to set the environment variables
 with the Heroku tools. The same idea applies to other PaaS platforms.
 
-Summary
--------
+## まとめ
 
--   A simple app may only need one configuration file: *config.py*.
+- 単純なアプリケーションでは単一の設定ファイル *config.py* のみで良いでしょう。
 -   Instance folders can help us hide secret configuration values.
 -   Instance folders can be used to alter an application's configuration
     for a specific environment.
