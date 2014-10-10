@@ -1,6 +1,6 @@
 # まえがき {-}
 これはFlaskの実践的な用例をまとめた本です。
-一般的なFlaskアプリケーションを開発する際、ユーザー認証やデータベースとの連携など、多くのモジュールを利用する必要があるでしょう。
+一般的なFlaskアプリケーションを開発する際、ユーザー認証やデータベースとの連携など、多くのモジュールを利用する必要があります。
 この本ではこれらの「正しい利用方法」を解説します。
 私はこのやり方を常に推奨するわけではありませんが、多くの場合において正しい選択だと考えています。
 
@@ -81,9 +81,9 @@ Flaskのマイナーアップデートが行われた際にこの本に細かな
 補足的な情報は注記で表示します。
 
 ## イースター・エッグ {-}
-Six backer names from the Kickstarter campaign have been encoded and
-sprinkled around the book. If you find all six and email the locations
-to me, I'll send you an extraordinarily mediocre prize. No hints.
+この本の中にキックスターターキャンペーンの6人の支援者の名前がエンコードされて散りばめられています。
+6つ全てを見つけて私にメールすると、ちょっとした賞を授与します。
+ヒントは無しです。
 
 ## まとめ {-}
 
@@ -100,5 +100,5 @@ to me, I'll send you an extraordinarily mediocre prize. No hints.
 
 [^2]: [My conversation with Armin Ronacher](https://www.youtube.com/watch?feature=player_detailpage&v=fs20qdvm0K4#t=190)
 
-[^3]: See, it *must* be true!
+[^3]: ここが脚注です。
 
