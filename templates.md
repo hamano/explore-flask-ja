@@ -19,7 +19,7 @@ Jinjaと言えば、<http://jinja.pocoo.org/>の事だと思ってください�
 Jinjaの構文と言語機能については公式ドキュメントに素晴らしい説明があります。
 ここで繰り返し説明は行いませんが最も重要な説明だけを抜粋します。
 
-> `{% ... %}`と`{{ ... }}`という2種類の区切り文字があります。
+> `{% ... %}`と`{{ ... }}`という2種類のカッコ文字があります。
 > `{% ... %}`はfor文や代入文などの式の実行に利用します。
 > `{{ ... }}`はテンプレート中に記述した式の評価結果を表示する為に利用します。
 >
@@ -75,7 +75,7 @@ templates/
 継承を行うには`{% extends %}`タグと`{% block %}`タグを利用します。
 親テンプレートでは子テンプレートで上書きするブロックを定義します。
 
-~~~
+~~~ {language="HTML"}
 {# _myapp/templates/layout.html_ #}
 
 <!DOCTYPE html>
@@ -93,7 +93,7 @@ templates/
 
 そして、子テンプレートでは親テンプレートを継承してブロックの内容を記述します。
 
-~~~
+~~~ {language="HTML"}
 {# _myapp/templates/index.html_ #}
 
 {% extends "layout.html" %}
@@ -120,26 +120,28 @@ to the current page). Without macros we'd end up with a block of
 Macros provide a way to modularize that code; they work like functions.
 Let's look at how we'd mark the active link using a macro.
 
-    {# myapp/templates/layout.html #}
+~~~ {language="HTML"}
+{# myapp/templates/layout.html #}
 
-    {% from "macros.html" import nav_link with context %}
-    <!DOCTYPE html>
-    <html lang="en">
-        <head>
-        {% block head %}
-            <title>My application</title>
-        {% endblock %}
-        </head>
-        <body>
-            <ul class="nav-list">
-                {{ nav_link('home', 'Home') }}
-                {{ nav_link('about', 'About') }}
-                {{ nav_link('contact', 'Get in touch') }}
-            </ul>
-        {% block body %}
-        {% endblock %}
-        </body>
-    </html>
+{% from "macros.html" import nav_link with context %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    {% block head %}
+        <title>My application</title>
+    {% endblock %}
+    </head>
+    <body>
+        <ul class="nav-list">
+            {{ nav_link('home', 'Home') }}
+            {{ nav_link('about', 'About') }}
+            {{ nav_link('contact', 'Get in touch') }}
+        </ul>
+    {% block body %}
+    {% endblock %}
+    </body>
+</html>
+~~~
 
 What we are doing in this template is calling an undefined macro —
 `nav_link` — and passing it two parameters: the target endpoint (i.e.
@@ -263,21 +265,12 @@ in our top-level *\_\_init.py\_\_*.
     # Make sure app has been initialized first to prevent circular imports.
     from .util import filters
 
-Summary
--------
-
--   Use Jinja for templating.
--   Jinja has two kinds of delimeters: `{% ... %}` and `{{ ... }}`. The
-    first one is used to execute statements such as for-loops or assign
-    values, the latter prints the result of the contained expression to
-    the template.
--   Templates should go in *myapp/templates/* — i.e. a directory inside
-    of the application package.
--   I recommend that the structure of the *templates/* directory mirror
-    the URL structure of the app.
--   You should have a top-level *layout.html* in *myapp/templates* as
-    well as one for each section of the site. The former extend the
-    latter.
+## まとめ
+- Jinjaテンプレートを使ってください。
+- Jinjaでは2種類のカッコを利用します: `{% ... %}` と `{{ ... }}`です。前者のカッコは式の実行やfor文、値の代入などで利用し、後者のカッコはテンプレート内で式の評価結果を表示します。
+- テンプレートは*myapp/templates/*という様なアプリケーションのパッケージ内に配置します。
+- テンプレートディレクトリはアプリケーションのURL構造と対応させる事を推奨します。
+- サイト内の全てのページで共通のレイアウトをトップレベルの*layout.html*に配置し、継承すると良いでしょう。
 -   Macros are like functions made-up of template code.
 -   Filters are functions made-up of Python code and used in templates.
 
