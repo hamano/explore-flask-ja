@@ -110,15 +110,12 @@ templates/
 継承についての情報は[Jinja Template Inheritence documentation](http://jinja.pocoo.org/docs/templates/#template-inheritance)を参照してください。
 
 ## マクロの作成
-We can implement DRY (Don't Repeat Yourself) principles in our templates
-by abstracting snippets of code that appear over and over into
-**macros**. If we're working on some HTML for our app's navigation, we
-might want to give a different class to the "active" link (i.e. the link
-to the current page). Without macros we'd end up with a block of
-`if ... else` statements that check each link to find the active one.
+マクロを作成してコードを抽象化する事でDRYの原則(同じことを繰り返さない)の原則を実践することが出来ます。
+例えば、ナビゲーションバーを表示するHTMLでは現在表示されているページへのリンクは異なるCSSクラスを指定したいはずです。
+マクロを利用せずこれを実装すると、`if ... else`文で現在のページを判別してリンクを記述しなければなりません。
 
-Macros provide a way to modularize that code; they work like functions.
-Let's look at how we'd mark the active link using a macro.
+マクロを作成することでこの様なコードを関数の様ににモジュール化出来ます。
+それでは、マクロを利用してナビゲーションバーを実装してみましょう。
 
 ~~~ {language="HTML"}
 {# myapp/templates/layout.html #}
@@ -143,127 +140,111 @@ Let's look at how we'd mark the active link using a macro.
 </html>
 ~~~
 
-What we are doing in this template is calling an undefined macro —
-`nav_link` — and passing it two parameters: the target endpoint (i.e.
-the function name for the target view) and the text we want to show.
+このテンプレートではまだ定義していないマクロ`nav_link`を呼び出しています。
+このマクロには2つのパラメーター(遷移先のビューの関数名と表示文字列)を渡しています。
 
-> **note**
->
-> You may notice that we specified `with context` in the import
-> statement. The Jinja **context** consists of the arguments passed to
-> the `render_template()` function as well as the Jinja environment
-> context from our Python code. These variables are made available in
-> the template that is being rendered.
->
-> Some variables are explicitly passed by us, e.g.
-> `render_template("index.html", color="red")`, but there are several
-> variables and functions that Flask automatically includes in the
-> context, e.g. `request`, `g` and `session`. When we say
-> `{% from ... import ... with context %}` we are telling Jinja to make
-> all of these variables available to the macro as well.
+**注記**
 
-> **note**
->
-> -   All of the global variables that are passed to the Jinja context
->     by Flask:
->     <http://flask.pocoo.org/docs/templating/#standard-context>}
-> -   We can define variables and functions that we want to be merged
->     into the Jinja context with context processors:
->     <http://flask.pocoo.org/docs/templating/#context-processors>
+インポート文で`with context`を指定していることに気がついたでしょうか?
+Jinjaのコンテキストとは`render_template()`関数で渡された引き数と、Pythonコードから渡された環境コンテキストを含みます。
+このインポート文により、これらの値をテンプレート内で利用できるようになります。
 
-Now it's time to define the `nav_link` macro that we used in our
-template.
+例えば、以下のように値を渡します。
 
-    {# myapp/templates/macros.html #}
-
-    {% macro nav_link(endpoint, text) %}
-    {% if request.endpoint.endswith(endpoint) %}
-        <li class="active"><a href="{{ url_for(endpoint) }}">{{text}}</a></li>
-    {% else %}
-        <li><a href="{{ url_for(endpoint) }}">{{text}}</a></li>
-    {% endif %}
-    {% endmacro %}
-
-Now we've defined the macro in *myapp/templates/macros.html*. In this
-macro we're using Flask's `request` object — which is available in the
-Jinja context by default — to check whether or not the current request
-was routed to the endpoint passed to `nav_link`. If it was, than we're
-currently on that page, and we can mark it as active.
-
-> **note**
->
-> The from x import y statement takes a relative path for x. If our
-> template was in *myapp/templates/user/blog.html* we would use
-> `from "../macros.html" import nav_link with context`.
-
-Custom filters
---------------
-
-Jinja filters are functions that can be applied to the result of an
-expression in the `{{ ... }}` delimeters. It is applied before that
-result is printed to the template.
-
-    <h2>{{ article.title|title }}</h2>
-
-In this code, the `title` filter will take `article.title` and return a
-title-cased version, which will then be printed to the template. This
-looks and works a lot like the UNIX practice of "piping" the output of
-one program to another.
-
-> **note**
->
-> There are loads of built-in filters like `title`. See [the full
-> list](http://jinja.pocoo.org/docs/templates/#builtin-filters) in the
-> Jinja docs.
-
-We can define our own filters for use in our Jinja templates. As an
-example, we'll implement a simple `caps` filter to capitalize all of the
-letters in a string.
-
-> **note**
->
-> Jinja already has an `upper` filter that does this, and a `capitalize`
-> filter that capitalizes the first character and lowercases the rest.
-> These also handle unicode conversion, but we'll keep our example
-> simple to focus on the concept at hand.
-
-We're going to define our filter in a module located at
-*myapp/util/filters.py*. This gives us a `util` package in which to put
-other miscellaneous modules.
-
-    # myapp/util/filters.py
-
-    from .. import app
-
-    @app.template_filter()
-    def caps(text):
-        """Convert a string to all caps."""
-        return text.uppercase()
-
-In this code we are registering our function as a Jinja filter by using
-the `@app.template_filter()` decorator. The default filter name is just
-the name of the function, but you can pass an argument to the decorator
-to change that.
-
-    @app.template_filter('make_caps')
-    def caps(text):
-        """Convert a string to all caps."""
-        return text.uppercase()
-
-Now we can call `make_caps` in the template rather than `caps`:
-
+~~~ {language="Python"}
+`render_template("index.html", color="red")`
 ~~~
+
+Flaskには自動的にコンテキストを渡す機能(`request`や`g`や`session`)がありますが、`{% from ... import ... with context %}`を指定した時はマクロに対して利用可能な全て値を渡します。
+
+**注記**
+
+- Jinjaコンテキストに渡されるグローバル変数の一覧はこちら:
+  <http://flask.pocoo.org/docs/templating/#standard-context>
+- Jinjaコンテキストにマージする独自のコンテキストプロセッサーを定義することもできます。
+  <http://flask.pocoo.org/docs/templating/#context-processors>
+
+それでは、テンプレート内に`nav_link`マクロを定義してみましょう。
+
+~~~ {language="HTML"}
+{# myapp/templates/macros.html #}
+
+{% macro nav_link(endpoint, text) %}
+{% if request.endpoint.endswith(endpoint) %}
+    <li class="active"><a href="{{ url_for(endpoint) }}">{{text}}</a></li>
+{% else %}
+    <li><a href="{{ url_for(endpoint) }}">{{text}}</a></li>
+{% endif %}
+{% endmacro %}
+~~~
+
+このマクロは*myapp/templates/macros.html*に配置しています。
+ここではJinjaコンテキストでデフォルトで利用できる`request`オブジェクトを利用しています。
+URLのエンドポイントをチェックして、現在表示しているページであればCSSクラスを変更します。
+
+**注記**
+
+*myapp/templates/user/blog.html*というテンプレートから、相対パスでマクロをインポートする場合、
+`from "../macros.html" import nav_link with context`とします。
+
+## カスタムフィルター
+Jinjaのフィルーター機能は`{{ ... }}`で適用することができます。
+この処理はテンプレートが表示される前に適用されます。
+
+~~~ {language="HTML"}
+<h2>{{ article.title|title }}</h2>
+~~~
+
+このコードでは`article.title`を`title`フィルターに渡し、最初の文字を大文字に変換して表示します。これはUNIXでプログラムの出力を別のプログラムに渡す「パイプ」の動作によく似ています。
+
+**注記**
+
+上記の`title`の様な組み込みフィルターの一覧は[Jinjaのドキュメント](http://jinja.pocoo.org/docs/templates/#builtin-filters)を参照してください。
+
+Jinjaテンプレート内で独自のフィルターを定義することも可能です。
+以下に、全ての文字を大文字に変換する単純なフィルターの実装例を示します。
+
+**注記**
+Jinjaには既にこれを実現する`upper`フィルターや`capitalize`フィルターが存在しますので、実用的にはこちらを利用してください。
+
+フィルターモジュールは*myapp/util/filters.py*に配置することにします。
+この`util`パッケージは種々様々なモジュールを置きます。
+
+~~~ {language="Python"}
+# myapp/util/filters.py
+
+from .. import app
+
+@app.template_filter()
+def caps(text):
+    """全ての文字を大文字に変換します。"""
+    return text.uppercase()
+~~~
+
+このコードでは`@app.template_filter()`デコレーターを利用してJinjaフィルターを登録しています。
+デフォルトでは単純に関数名がフィルター名になりますが、以下の様にデコレーターに引き数を渡してフィルター名を変更することができます。
+
+~~~ {language="Python"}
+@app.template_filter('make_caps')
+def caps(text):
+    """全ての文字を大文字に変換します。"""
+    return text.uppercase()
+~~~
+
+以下のように関数名の`caps`ではなく、`make_caps`という名前でフィルターを呼び出せます。
+
+~~~ {language="HTML"}
 {{ "hello world!"|make_caps }}
 ~~~
 
+フィルターを有効にするには、最上位の*\_\_init.py\_\_*でインポートする必要があります。
 
-To make our filter available in the templates, we just need to import it
-in our top-level *\_\_init.py\_\_*.
+~~~ {language="Python"}
+# myapp/__init__.py
 
-    # myapp/__init__.py
-
-    # Make sure app has been initialized first to prevent circular imports.
-    from .util import filters
+# Make sure app has been initialized first to prevent circular imports.
+from .util import filters
+~~~
 
 ## まとめ
 - Jinjaテンプレートを使ってください。
@@ -271,6 +252,6 @@ in our top-level *\_\_init.py\_\_*.
 - テンプレートは*myapp/templates/*という様なアプリケーションのパッケージ内に配置します。
 - テンプレートディレクトリはアプリケーションのURL構造と対応させる事を推奨します。
 - サイト内の全てのページで共通のレイアウトをトップレベルの*layout.html*に配置し、継承すると良いでしょう。
--   Macros are like functions made-up of template code.
--   Filters are functions made-up of Python code and used in templates.
+- マクロはテンプレート内で利用できる関数の様なものです。
+- フィルターはテンプレート内でPythonコードを評価する機能です。
 
