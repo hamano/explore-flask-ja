@@ -12,7 +12,7 @@ Flaskコミュニティでは殆どの開発者がJinjaテンプレートを利�
 
 この本でのJinjaとは、Jinja2の事を示しています。
 Jinja1というものがありましたがここではこれを扱いません。
-Jinjaと言えば、<http://jinja.pocoo.org/>の事だと思ってください。
+Jinjaと言えばこの[Jinja2](http://jinja.pocoo.org/)の事だと思ってください。
 
 ## Jinja入門
 
