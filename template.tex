@@ -1,0 +1,85 @@
+\documentclass[a4paper,12pt]{jsbook}
+
+\usepackage[blue]{hamacro}
+\usepackage{pxjahyper}
+\usepackage{eso-pic}
+
+\hypersetup{
+  pdfstartview={FitV},
+  pdftitle={$title$},
+  pdfsubject={$subtitle$},
+  pdfauthor={$authors$},
+  pdfkeywords={$keywords$},
+}
+
+%\usepackage{ctable}
+%\usepackage{longtable}
+%\usepackage{enumerate}
+
+% title
+\title{$title$}
+\author{$author$}
+\date{\today}
+
+\newcommand\CoverPage{
+  \put(9,-12){
+    \includegraphics[width=\paperwidth,height=\paperheight]{./images/cover.eps}
+  }
+}
+
+% document
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\AddToShipoutPicture*{\CoverPage}
+\end{center}
+\clearpage
+\thispagestyle{empty}
+
+\begin{flushright}
+{\sf 第$version$版}
+\end{flushright}
+\vspace*{3em}
+\begin{center}
+{\Huge\bf{$title$}}
+\smallskip\\
+{\Large\it{$subtitle$}}
+\vspace{8em}\\
+{\Large\bf{$author$ 著}}
+\smallskip\\
+{\Large\bf{$translator$ 訳}}
+
+\end{center}
+
+\end{titlepage}
+
+\frontmatter
+%\renewcommand{\chaptermark}[1]{{}}
+
+$if(toc)$
+\tableofcontents
+$endif$
+
+\mainmatter
+$body$
+
+%\clearpage
+\backmatter
+\thispagestyle{empty}
+\vspace*{\fill}
+
+{\noindent\Large{$title$}} \\
+\rule[8pt]{14cm}{1pt} \\
+{\noindent
+\today $version$版発行
+\noindent
+}
+\bigskip\\
+\begin{tabular}{ll}
+著者 & $author$ \\
+翻訳 & $translator$ \\
+\end{tabular}
+\bigskip\\
+\rule[0pt]{14cm}{1pt} \\
+
+\end{document}
