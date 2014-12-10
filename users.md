@@ -14,83 +14,82 @@
 ## メール確認
 
 新規ユーザーがメールアドレスを入力した場合、一般的にはこのメールアドレスの正当性を確認したいはずです。
-この確認を行うことで私達は心配をすることなくパスワードのリセットメールやその他の重要なメールを配信できるようになります。
+この確認を行うことで私達は安心してパスワードのリセットメールやその他の重要なメールを配信できるようになります。
 
-One of the most common patterns for confirming emails is to send a
-password reset link with a unique URL that, when visited, confirms that
-user's email address. For example, <john@gmail.com> signs up at our
-application. We register him in the database with an `email_confirmed`
-column set to `False` and fire off an email to <john@gmail.com> with a
-unique URL. This URL usually contains a unique token, e.g.
-*<http://myapp.com/accounts/confirm-/Q2hhZCBDYXRsZXR0IHJvY2tzIG15IHNvY2tz>*.
-When John gets that email, he clicks the link. Our app sees the token,
-knows which email to confirm and sets John's `email_confirmed` column to
-`True`.
+メールアドレスを確認する一般的な方法は、パスワードをリセットするユニークなURLを含むリンクを送信し、そのURLにアクセスさせて確認する方法です。
+例えば、john@example.com というメールアドレスでサインアップが行われたとします。
+そうするとまずデーターベースの`email_confirmed`というカラムを`False`に設定して確認メールを送信します。
+このメールにはユニークなトークンを含んだURLが記載されています。
+例えばこの様なURLです:
 
-How do we know which email to confirm with a given token? One way would
-be to store the token in the database when it is created and check that
-table when we receive the confirmation request. That's a lot of overhead
-and, lucky for us, it's unnecessary.
+*<http://myapp.com/accounts/confirm-/Q2hhZCBDYXRsZXR0IHJvY2tzIG15IHNvY2tz>*
 
-We're going to encode the email address in the token. The token will
-also contain a timestamp to let us set a time limit on how long it's
-valid. To do this, we'll use the `itsdangerous` package. This package
-gives us tools to send sensitive data into untrusted environments (like
-sending an email confirmation token to an unconfirmed email). In this
-case, we're going to use an instance of the `URLSafeTimedSerializer`
-class.
+Johnがこのメールを受け取りクリックすると、アプリケーションはトークンをチェックしてJohnの`email_confirmed`カラムを`True`に設定します。
 
-    # ourapp/util/security.py
+どの様にしてトークンの確認を行うのでしょうか?
+一つの方法はトークンをデーターベースに格納してこれと照合する方法です。
+これは負荷が高いですし、私達にとっては不必要です。
 
-    from itsdangerous import URLSafeTimedSerializer
+ここではメールアドレスをエンコードしてトークンを生成する方法を利用します。
+このトークンにタイムスタンプを含めることで有効期限を設定することも可能です。
+これを行うために`itsdangerous`パッケージを利用します。
+このパッケージは信頼されていない環境に対して重要なデータを送信する為のツールを提供します。
+今回はこの`itsdangerous`パッケージの`URLSafeTimedSerializer`クラスを利用します。
 
-    from .. import app
+~~~ {language="Python"}
+# ourapp/util/security.py
 
-    ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+from itsdangerous import URLSafeTimedSerializer
 
-We can use that serializer to generate a confirmation token when a user
-gives us their email address. We'll implement a simple account creation
-process using this method.
+from .. import app
 
-    # ourapp/views.py
+ts = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+~~~
 
-    from flask import redirect, render_template, url_for
+このシリアライザーを利用してメールアドレスを確認するトークンを生成することができます。
+ここではこの方法を用いて簡単なアカウント生成処理を実装していきます。
 
-    from . import app, db
-    from .forms import EmailPasswordForm
-    from .util import ts, send_email
+~~~ {language="Python"}
+# ourapp/views.py
 
-    @app.route('/accounts/create', methods=["GET", "POST"])
-    def create_account():
-        form = EmailPasswordForm()
-        if form.validate_on_submit():
-            user = User(
-                email = form.email.data,
-                password = form.password.data
-            )
-            db.session.add(user)
-            db.session.commit()
+from flask import redirect, render_template, url_for
 
-            # Now we'll send the email confirmation link
-            subject = "Confirm your email"
+from . import app, db
+from .forms import EmailPasswordForm
+from .util import ts, send_email
 
-            token = ts.dumps(self.email, salt='email-confirm-key')
+@app.route('/accounts/create', methods=["GET", "POST"])
+def create_account():
+    form = EmailPasswordForm()
+    if form.validate_on_submit():
+        user = User(
+            email = form.email.data,
+            password = form.password.data
+        )
+        db.session.add(user)
+        db.session.commit()
 
-            confirm_url = url_for(
-                'confirm_email',
-                token=token,
-                _external=True)
+        # Now we'll send the email confirmation link
+        subject = "Confirm your email"
 
-            html = render_template(
-                'email/activate.html',
-                confirm_url=confirm_url)
+        token = ts.dumps(self.email, salt='email-confirm-key')
 
-            # We'll assume that send_email has been defined in myapp/util.py
-            send_email(user.email, subject, html)
+        confirm_url = url_for(
+            'confirm_email',
+            token=token,
+            _external=True)
 
-            return redirect(url_for("index"))
+        html = render_template(
+            'email/activate.html',
+            confirm_url=confirm_url)
 
-        return render_template("accounts/create.html", form=form)
+        # We'll assume that send_email has been defined in myapp/util.py
+        send_email(user.email, subject, html)
+
+        return redirect(url_for("index"))
+
+    return render_template("accounts/create.html", form=form)
+~~~
 
 The view that we've defined handles the creation of the user and sends
 off an email to the given email address. You may notice that we're using
