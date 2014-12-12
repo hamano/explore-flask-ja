@@ -91,44 +91,50 @@ def create_account():
     return render_template("accounts/create.html", form=form)
 ~~~
 
-The view that we've defined handles the creation of the user and sends
-off an email to the given email address. You may notice that we're using
-a template to generate the HTML for the email.
+ここで定義したビューはユーザーの作成処理を行い、登録したメールアドレスに確認メールを送信します。
+メールの文章を生成する際にHTMLテンプレートを使用しています。
 
-    {# ourapp/templates/email/activate.html #}
+~~~ {language="HTML"}
+{# ourapp/templates/email/activate.html #}
 
-    Your account was successfully created. Please click the link below<br>
-    to confirm your email address and activate your account:
+Your account was successfully created. Please click the link below<br>
+to confirm your email address and activate your account:
 
-    <p>
-    <a href="{{ confirm_url }}">{{ confirm_url }}</a>
-    </p>
+<p>
+<a href="{{ confirm_url }}">{{ confirm_url }}</a>
+</p>
 
-    <p>
-    --<br>
-    Questions? Comments? Email hello@myapp.com.
-    </p>
+<p>
+--<br>
+Questions? Comments? Email hello@myapp.com.
+</p>
+~~~
 
 Okay, so now we just need to implement a view that handles the
 confirmation link in that email.
 
-    # ourapp/views.py
+これでメールの送信処理は大丈夫ですね。
+あとは確認メールのリンクにアクセスした時の処理を実装する必要があります。
 
-    @app.route('/confirm/<token>')
-    def confirm_email(token):
-        try:
-            email = ts.loads(token, salt="email-confirm-key", max_age=86400)
-        except:
-            abort(404)
+~~~ {language="Python"}
+# ourapp/views.py
 
-        user = User.query.filter_by(email=email).first_or_404()
+@app.route('/confirm/<token>')
+def confirm_email(token):
+    try:
+        email = ts.loads(token, salt="email-confirm-key", max_age=86400)
+    except:
+        abort(404)
 
-        user.email_confirmed = True
+    user = User.query.filter_by(email=email).first_or_404()
 
-        db.session.add(user)
-        db.session.commit()
+    user.email_confirmed = True
 
-        return redirect(url_for('signin'))
+    db.session.add(user)
+    db.session.commit()
+
+    return redirect(url_for('signin'))
+~~~
 
 This view is a simple form view. We just add the `try ... except` bit at
 the beginning to check that the token is valid. The token contains a
