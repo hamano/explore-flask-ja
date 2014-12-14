@@ -110,9 +110,6 @@ Questions? Comments? Email hello@myapp.com.
 </p>
 ~~~
 
-Okay, so now we just need to implement a view that handles the
-confirmation link in that email.
-
 これでメールの送信処理は大丈夫ですね。
 あとは確認メールのリンクにアクセスした時の処理を実装する必要があります。
 
@@ -136,18 +133,15 @@ def confirm_email(token):
     return redirect(url_for('signin'))
 ~~~
 
-This view is a simple form view. We just add the `try ... except` bit at
-the beginning to check that the token is valid. The token contains a
-timestamp, so we can tell `ts.loads()` to raise an exception if it is
-older than `max_age`. In this case, we're setting `max_age` to 86400
-seconds, i.e. 24 hours.
+このビューはとても単純な構造をしています。
+トークンが有効かどうかを確認するために`try ... except`文を記述しています。
+トークンにはタイムスタンプが含まれているので、`max_age`より古いトークンだと`ts.loads()`は例外を投げます。
+今回の場合、`max_age`に86400秒を設定していますのでトークンの有効期限は1日となります。
 
-> **note**
->
-> You can use very similar methods to implement an email update feature.
-> Just send a confirmation link to the new email address with a token
-> that contains both the old and the new addresses. If the token is
-> valid, update the old address with the new one.
+**注記**
+メールアドレスの更新処理を実装する際にも似たような方法を利用できます。
+古いアドレスと新しいアドレスを含むトークンを生成すると良いでしょう。
+このトークンを検証した後に新しいアドレスへ変更します。
 
 Storing passwords
 -----------------
