@@ -1,6 +1,6 @@
 # コーディング規約
 
-![コーディング規約](./images/conventions.eps)
+![コーディング規約](./images/conventions.png)
 
 Pythonコミュニティにはコードを記述する為の幾つかの規約があります。
 あなたが既にPythonプログラマである場合は既にこの規約について知っている
