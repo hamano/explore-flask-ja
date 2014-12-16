@@ -143,34 +143,29 @@ def confirm_email(token):
 古いアドレスと新しいアドレスを含むトークンを生成すると良いでしょう。
 このトークンを検証した後に新しいアドレスへ変更します。
 
-Storing passwords
------------------
+## 強力なパスワード
 
-Rule number one of handling users is to hash passwords with the Bcrypt
-(or scrypt, but we'll use Bcrypt here) algorithm before storing them. We
-never store passwords in plain text. It's a massive security issue and
-it's unfair to our users. All of the hard work has already been done and
-abstracted away for us, so there's no excuse for not following the best
-practices here.
+1つ目のルールはパスワードのハッシュアルゴリズムにBcryptを利用することです。
+scryptでも構いませんがここではBcryptを利用します。
+決してプレーンテキストのままパスワードを格納しないでください。
+それはセキュリティ上の重大な問題であり、ユーザに対して不利益をもたらします。
+実装が大変な処理は既にモジュール化されていますので、あとは最適な方法を利用するだけです。
 
-> **note**
->
-> OWASP is one of the industry's most trusted source for information
-> regarding web application security. Take a look at some of their
-> [recommendations for secure
-> coding](https://www.owasp.org/index.php/Secure_Coding_Cheat_Sheet#Password_Storage).
+**注記**
 
-We'll go ahead and use the Flask-Bcrypt extension to implement the
-bcrypt package in our application. This extension is basically just a
-wrapper around the `py-bcrypt` package, but it does handle a few things
-that would be annoying to do ourselves (like checking string encodings
-before comparing hashes).
+OWASPはWEBアプリケーションのセキュリティについてこの業界で最も信頼できる情報源の一つです。
+[こちら](https://www.owasp.org/index.php/Secure_Coding_Cheat_Sheet#Password_Storage)で推奨されているセキュアコーディングを読んでおいてください。
 
-    # ourapp/__init__.py
+ここではアプリケーションでbcryptを利用するためにFlask-Bcrypt拡張を利用します。
+この拡張は`py-bcrypt`の単純なラッパーですがエンコーディングのチェックなど幾つかの面倒な処理をやってくれます。
 
-    from flask.ext.bcrypt import Bcrypt
+~~~ {language="Python"}
+# ourapp/__init__.py
 
-    bcrypt = Bcrypt(app)
+from flask.ext.bcrypt import Bcrypt
+
+bcrypt = Bcrypt(app)
+~~~
 
 One of the reasons that the Bcrypt algorithm is so highly recommended is
 that it is "future adaptable." This means that over time, as computing
