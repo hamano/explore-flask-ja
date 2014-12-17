@@ -167,51 +167,45 @@ from flask.ext.bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 ~~~
 
-One of the reasons that the Bcrypt algorithm is so highly recommended is
-that it is "future adaptable." This means that over time, as computing
-power becomes cheaper, we can make it more and more difficult to brute
-force the hash by guessing millions of possible passwords. The more
-"rounds" we use to hash the password, the longer it will take to make
-one guess. If we hash our passwords 20 times with the algorithm before
-storing them the attacker has to hash each of their guesses 20 times.
+Bcryptアルゴリズムを強く推奨した理由の一つは「未来に順応」するからです。
+これは時代と共に計算能力がより安価になった場合でも、ブルートフォース攻撃を困難に出来ることを意味します。
+パスワードをより多くの「ラウンド」回数ハッシュする事により、推測により時間が掛かるようになります。
+例えばパスワードを格納する前に20回ハッシュした場合、攻撃者はパスワードを推測する度に20回のハッシュを行う必要があります。
 
-Keep in mind that if we're hashing our passwords 20 times then our
-application is going to take a long time to return a response that
-depends on that process completing. This means that when choosing the
-number of rounds to use, we have to balance security and usability. The
-number of rounds we can complete in a given amount of time will depend
-on the computational resources available to our application. It's a good
-idea to test out some different numbers and shoot for between 0.25 and
-0.5 seconds to hash a password. We should try to use at least 12 rounds
-though.
+あまり多くのラウンド数ハッシュを行うとアプリケーションがレスポンスを返すのに時間が掛かってしまうことに注意してください。
+このラウンド数を決定する際には、セキュリティとユーザービリティのバランスが重要になります。
+一定時時間に処理可能なラウンド数はアプリケーションが動作する計算リソースに依存します。
+幾つかのラウンド数を試してみて、パスワードのハッシュ時間が0.25秒〜0.5秒に収まるようにすることをお勧めします。
 
-To test the time it takes to hash a password, we can time a quick Python
-script that, well, hashes a password.
+以下のようなPythonスクリプトでパスワードのハッシュ時間を計測できます。
 
-    # benchmark.py
+~~~ {language="Python"}
+# benchmark.py
 
-    from flask.ext.bcrypt import generate_password_hash
+from flask.ext.bcrypt import generate_password_hash
 
-    # Change the number of rounds (second argument) until it takes between
-    # 0.25 and 0.5 seconds to run.
-    generate_password_hash('password1', 12) 
+# 実行時間が0.25秒〜0.5秒に収まるようにラウンド数を変更してください。
+generate_password_hash('password1', 12)
+~~~
 
-Now we can keep timing our changes to the number of rounds with the UNIX
-`time` utility.
+UNIXの`time`コマンドで実行時間を計測できます。
 
-    $ time python test.py 
+~~~
+$ time python test.py
 
-    real    0m0.496s
-    user    0m0.464s
-    sys     0m0.024s
+real    0m0.496s
+user    0m0.464s
+sys     0m0.024s
+~~~
 
-I did a quick benchmark on a small server that I have handy and 12
-rounds seemed to take the right amount of time, so I'll configure our
-example to use that.
+私達は非力なサーバーで計測したので12ラウンドが適当でした。
+これを設定ファイルに記述します。
 
-    # config.py
+~~~ {language="Python"}
+# config.py
 
-    BCRYPT_LOG_ROUNDS = 12
+BCRYPT_LOG_ROUNDS = 12
+~~~
 
 Now that Flask-Bcrypt is configured, it's time to start hashing
 passwords. We could do this manually in the view that receives the
@@ -535,9 +529,7 @@ right URL. Let's have a look at what that template might look like.
     </form>
     {% endblock %}
 
-Summary
--------
-
+## まとめ
 -   Use the itsdangerous package to create and validate tokens sent to
     an email address.
 -   You can use these tokens to validate emails when a user creates an
