@@ -97,8 +97,9 @@ def create_account():
 ~~~ {language="HTML"}
 {# ourapp/templates/email/activate.html #}
 
-Your account was successfully created. Please click the link below<br>
-to confirm your email address and activate your account:
+アカウントの作成に成功しました。<br>
+アカウントを有効にするには以下のリンクをクリックしてメールアドレスを確
+認してください。
 
 <p>
 <a href="{{ confirm_url }}">{{ confirm_url }}</a>
@@ -106,7 +107,7 @@ to confirm your email address and activate your account:
 
 <p>
 --<br>
-Questions? Comments? Email hello@myapp.com.
+なにか質問があればこちらまで hello@example.com
 </p>
 ~~~
 
@@ -207,62 +208,59 @@ sys     0m0.024s
 BCRYPT_LOG_ROUNDS = 12
 ~~~
 
-Now that Flask-Bcrypt is configured, it's time to start hashing
-passwords. We could do this manually in the view that receives the
-request from the sign-up form, but we'd have to do it again in the
-password reset and password change views. Instead, what we'll do is
-abstract away the hashing so that our app does it without us even
-thinking about it. We'll use a **setter** so that when we set
-`user.password = 'password1'`, it's automatically hashed with Bcrypt
-before being stored.
+Flask-Bcryptの設定は完了しましたのでパスワードのハッシュ処理を実装しましょう。
+サインアップフォームからの入力を受け取るビューでこれを行うことも出来ますが、パスワードリセットやパスワードの変更ビューでも同じ事をやらなければなりません。
+ですので、ハッシュ処理はもっと抽象レイヤで行うと良いでしょう。
+ここでは、セッターを定義して、`user.password = 'password1'`を実行した時に自動的にパスワードをBcryptでハッシュするようにします。
 
-    # ourapp/models.py
+~~~ {language="Python"}
+# ourapp/models.py
 
-    from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.hybrid import hybrid_property
 
-    from . import bcrypt, db
+from . import bcrypt, db
 
-    class User(db.Model):
-        id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-        username = db.Column(db.String(64), unique=True)
-        _password = db.Column(db.String(128))
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(64), unique=True)
+    _password = db.Column(db.String(128))
 
-        @hybrid_property
-        def password(self):
-            return self._password
+    @hybrid_property
+    def password(self):
+        return self._password
 
-        @password.setter
-        def _set_password(self, plaintext):
-            self._password = bcrypt.generate_password_hash(plaintext)
+    @password.setter
+    def _set_password(self, plaintext):
+        self._password = bcrypt.generate_password_hash(plaintext)
+~~~
 
-We're using SQLAlchemy's hybrid extension to define a property with
-several different functions called from the same interface. Our setter
-is called when we assign a value to the `user.password` property. In it,
-we hash the plaintext password and store it in the `_password` column of
-the user table. Since we're using a hybrid property we can then access
-the hashed password via the same `user.password` property.
+ここではSQLAlchemyのhybrid拡張を利用しています。
+`user.password`に対して代入を行うと新しく定義したセッターが呼び出されます。
+このセッターの中で平文のパスワードをハッシュ化し、データーベースの`_password`カラムに格納しています。
+hybridプロパティを利用しているので`user.password`プロパティにアクセスするとハッシュ化されたパスワードを取得できます。
 
-Now we can implement a sign-up view for an app using this model.
+それでは、このモデルを利用してサインアップビューを実装してみましょう。
 
-    # ourapp/views.py
+~~~ {language="Python"}
+# ourapp/views.py
 
-    from . import app, db
-    from .forms import EmailPasswordForm
-    from .models import User
+from . import app, db
+from .forms import EmailPasswordForm
+from .models import User
 
-    @app.route('/signup', methods=["GET", "POST"])
-    def signup():
-        form = EmailPasswordForm()
-        if form.validate_on_submit():
-            user = User(username=form.username.data, password=form.password.data)
-            db.session.add(user)
-            db.session.commit()
-            return redirect(url_for('index'))
+@app.route('/signup', methods=["GET", "POST"])
+def signup():
+    form = EmailPasswordForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, password=form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('index'))
 
-        return render_template('signup.html', form=form)
+    return render_template('signup.html', form=form)
+~~~
 
-Authentication
---------------
+## 認証
 
 Now that we've got a user in the database, we can implement
 authentication. We'll want to let a user submit a form with their
@@ -530,10 +528,8 @@ right URL. Let's have a look at what that template might look like.
     {% endblock %}
 
 ## まとめ
--   Use the itsdangerous package to create and validate tokens sent to
-    an email address.
--   You can use these tokens to validate emails when a user creates an
-    account, changes their email or forgets their password.
+- メールアドレスを確認するためのトークンを生成したり検証するにはitsdangerousパッケージを利用してください。
+- アカウントの作成や、メールアドレスの変更、パスワードを忘れた時にもこのトークンを利用してメールアドレスを検証することが出来ます。
 -   Authenticate users using the Flask-Login extension to avoid dealing
     with a bunch of session management stuff yourself.
 -   Always think about how a malicious user could abuse your app to do
