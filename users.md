@@ -8,7 +8,7 @@
 
 **注記**
 
-この章では、ユーザーの入力処理をSQLAlchemyのモデルとWTFormsを利用している事を前提としています。
+この章ではユーザーの入力処理に関して、SQLAlchemyのモデルとWTFormsを利用している事を前提としています。
 もしこれらを利用していない場合は、必要に応じて読み替えてください。
 
 ## メール確認
@@ -262,67 +262,67 @@ def signup():
 
 ## 認証
 
-Now that we've got a user in the database, we can implement
-authentication. We'll want to let a user submit a form with their
-username and password (though this might be email and password for some
-apps), then make sure that they gave us the correct password. If it all
-checks out, we'll mark them as authenticated by setting a cookie in
-their browser. The next time they make a request we'll know that they
-have already logged in by looking for that cookie.
+データーベースにユーザーが入りましたので認証処理を実装することが出来ます。
+まずユーザーがユーザー名とパスワード(メールアドレスとパスワードかもしれません)を送信し、そのパスワードが正しい事を確認します。
+全てのチェックが通ると、ブラウザにクッキーを設定して認証済みである印を付けます。
+次回からアクセスはこのクッキーを参照することでログイン済みであることが解ります。
 
-Let's start by defining a `UsernamePassword` form with WTForms.
+それではWTFormsで`UsernamePassword`というクラスを定義してみましょう。
 
-    # ourapp/forms.py
+~~~ {language="Python"}
+# ourapp/forms.py
 
-    from flask.ext.wtforms import Form
-    from wtforms import TextField, PasswordField, Required
+from flask.ext.wtforms import Form
+from wtforms import TextField, PasswordField, Required
 
-    class UsernamePasswordForm(Form):
-        username = TextField('Username', validators=[Required()])
-        password = PasswordField('Password', validators=[Required()])
+class UsernamePasswordForm(Form):
+    username = TextField('Username', validators=[Required()])
+    password = PasswordField('Password', validators=[Required()])
+~~~
 
-Next we'll add a method to our user model that compares a string with
-the hashed password stored for that user.
+次に、ユーザーのモデルにハッシュ化されたパスワードと比較するメソッドを追加します。
 
-    # ourapp/models.py
+~~~ {language="Python"}
+# ourapp/models.py
 
-    from . import db
+from . import db
 
-    class User(db.Model):
+class User(db.Model):
 
-        # [...] columns and properties
+    # [...] columns and properties
 
-        def is_correct_password(self, plaintext)
-            return bcrypt.check_password_hash(self._password, plaintext)
+    def is_correct_password(self, plaintext)
+        return bcrypt.check_password_hash(self._password, plaintext)
+~~~
 
 ### Flask-Login
 
-Our next goal is to define a sign-in view that serves and accepts our
-form. If the user enters the correct credentials, we will authenticate
-them using the Flask-Login extension. This extension simplifies the
-process of handling user sessions and authentication.
+次の目標はサインインフォームからの入力を受け付けるビューを定義することです。
+ユーザーが正しいパスワードを入力するとFlask-Login拡張が認証処理を行います。
+この拡張は認証とセッションの処理を簡単にしてくれます。
 
-We need to do a little bit of configuration to get Flask-Login ready to
-roll.
+Flask-Loginを使う準備としてちょっとした設定を行う必要があります。
 
-In *\_\_init\_\_.py* we'll define the Flask-Login `login_manager`.
+*\_\_init\_\_.py*にFlask-Loginのオブジェクト`login_manager`を定義してください。
 
-    # ourapp/__init__.py
+~~~ {language="Python"}
+# ourapp/__init__.py
 
-    from flask.ext.login import LoginManager
+from flask.ext.login import LoginManager
 
-    # Create and configure app
-    # [...]
+# Create and configure app
+# [...]
 
-    from .models import User
+from .models import User
 
-    login_manager = LoginManager()
-    login_manager.init_app(app)
-    login_manager.login_view =  "signin"
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view =  "signin"
 
-    @login_manager.user_loader
-    def load_user(userid):
-        return User.query.filter(User.id==userid).first()
+@login_manager.user_loader
+def load_user(userid):
+    return User.query.filter(User.id==userid).first()
+~~~
 
 Here we created an instance of the `LoginManager`, initialized it with
 our `app` object, defined the login view and told it how to get a user
