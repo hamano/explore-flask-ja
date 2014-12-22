@@ -324,60 +324,59 @@ def load_user(userid):
     return User.query.filter(User.id==userid).first()
 ~~~
 
-Here we created an instance of the `LoginManager`, initialized it with
-our `app` object, defined the login view and told it how to get a user
-object with a user's `id`. This is the baseline configuration we should
-have for Flask-Login.
+ここでは`LoginManager`クラスのインスタンスを生成し、初期化を行い、ログインビューの定義と、ユーザーオブジェクトの取得方法を記述しています。
+これがFlask-Loginの基本的な構成です。
 
-> **note**
->
-> See more [ways to customize
-> Flask-Login](https://flask-login.readthedocs.org/en/latest/#customizing-the-login-process).
 
-Now we can define the `signin` view that will handle authentication.
+**注記**
+Flask-Loginのカスタマイズ方法については[こちら](https://flask-login.readthedocs.org/en/latest/#customizing-the-login-process)を参照してください。
 
-    # ourapp/views.py
+そして認証処理を行う`signin`ビューを定義します。
 
-    from flask import redirect, url_for
+~~~ {language="Python"}
+# ourapp/views.py
 
-    from flask.ext.login import login_user
+from flask import redirect, url_for
 
-    from . import app
-    from .forms import UsernamePasswordForm()
+from flask.ext.login import login_user
 
-    @app.route('signin', methods=["GET", "POST"])
-    def signin():
-        form = UsernamePasswordForm()
+from . import app
+from .forms import UsernamePasswordForm()
 
-        if form.validate_on_submit():
-            user = User.query.filter_by(username=form.username.data).first_or_404()
-            if user.is_correct_password(form.password.data):
-                login_user(user)
+@app.route('signin', methods=["GET", "POST"])
+def signin():
+    form = UsernamePasswordForm()
 
-                return redirect(url_for('index'))
-            else:
-                return redirect(url_for('signin'))
-        return render_template('signin.html', form=form)
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first_or_404()
+        if user.is_correct_password(form.password.data):
+            login_user(user)
 
-We simply import the `login_user` function from Flask-Login, check a
-user's login credentials and call `login_user(user)`. You can log the
-current user out with `logout_user()`.
+            return redirect(url_for('index'))
+        else:
+            return redirect(url_for('signin'))
+    return render_template('signin.html', form=form)
+~~~
 
-    # ourapp/views.py
+まずFlask-Loginの`login_user`関数をインポートし、パスワードをチェックした後にこの`login_user(user)`を呼び出します。
+ログアウトの際には`logout_user()`を呼び出す必要があります。
 
-    from flask import redirect, url_for
-    from flask.ext.login import logout_user
+~~~ {language="Python"}
+# ourapp/views.py
 
-    from . import app
+from flask import redirect, url_for
+from flask.ext.login import logout_user
 
-    @app.route('/signout')
-    def signout():
-        logout_user()
+from . import app
 
-        return redirect(url_for('index'))
+@app.route('/signout')
+def signout():
+    logout_user()
 
-Forgot your password
---------------------
+    return redirect(url_for('index'))
+~~~
+
+## パスワードのリカバリ
 
 We'll generally want to implement a "Forgot your password" feature that
 lets a user recover their account by email. This area has a plethora of
