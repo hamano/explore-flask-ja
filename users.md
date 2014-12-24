@@ -378,101 +378,96 @@ def signout():
 
 ## パスワードのリカバリ
 
-We'll generally want to implement a "Forgot your password" feature that
-lets a user recover their account by email. This area has a plethora of
-potential vulnerabilities because the whole point is to let an
-unauthenticated user take over an account. We'll implement our password
-reset using some of the same techniques as our email confirmation.
+ここでは「パスワードを忘れた」時にメールを利用してアカウントを復旧させるの機能を実装します。
+このあたりの処理は認証されていないユーザーにアカウントを渡すことになるので脆弱性が生まれやすい所です。
+ここではこれまでに紹介したメール確認のテクニックと同じ方法でパスワードリセットを実装します。
 
-We'll need a form to request a reset for a given account's email and a
-form to choose a new password once we've confirmed that the
-unauthenticated user has access to that email address. The code in this
-section assumes that our user model has an email and a password, where
-the password is a hybrid property as we previously created.
 
-> **warning**
+まずパスワードを忘れたユーザーがメールアドレスを入力するフォームが必要になります。
+ここではユーザーのモデルにメールアドレスとパスワードを持っていると仮定します。
+パスワードは前回実装した通りのハイブリッドプロパティです。
+
+**警告**
+
+有効性を確認していないメールアドレスにパスワードリセットメールを送信しないでください!
+パスワードのリセットメールは確実にアカウントの所有者に送りたいはずです。
+
+これから2つのフォームが必要になります。
+1つ目はリセットリンクを送信するメールアドレスを入力するフォームと、もうひとつはパスワードの変更を受け付けるフォームです。
+
+~~~ {language="Python"}
+# ourapp/forms.py
+
+from flask.ext.wtforms import Form
+
+from wtforms import TextField, PasswordField, Required, Email
+
+class EmailForm(Form):
+    email = TextField('Email', validators=[Required(), Email()])
+
+class PasswordForm(Form):
+    password = PasswordField('Email', validators=[Required()])
+~~~
+
+typoを避けるために新しいパスワードを2回入力させるアプリケーションが多いですが、ここでは1つのパスワードフィールドしか用意していません。
+これを行うには単純にもうひとつ`PasswordField`を追加してWTFormsの`EqualTo`バリデーターを指定してください。
+
+**注記**
+
+サインアップフォームに関してはUX(ユーザーエクスペリエンス)のコミュニティで多くの興味深い議論が行われています。
+
+個人的にStack ExchangeでのRoger Attrillが言った考え方が好きです:
 >
-> Don't send password reset links to an unconfirmed email address! You
-> want to be sure that you are sending this link to the right person.
+> 私達はパスワードを2回入力させるようなことはしません。
+> パスワードのリカバリ機能が完璧に機能していれば、1度だけ入力させるだけで十分です。
 
-We're going to need two forms. One is to request that a reset link be
-sent to a certain email and the other is to change the password once the
-email has been verified.
+- この話題についてはこちらを参照してください。
 
-    # ourapp/forms.py
+    [Stack ExchangeのUXスレッド](http://ux.stackexchange.com/questions/20953/why-should-we-ask-the-password-twice-during-registration/21141)
 
-    from flask.ext.wtforms import Form
+- ここにもサインアップやサインインに関しての素晴らしいアイディアがあります。
 
-    from wtforms import TextField, PasswordField, Required, Email
+    [Smashing Magazineの記事](http://uxdesign.smashingmagazine.com/2011/05/05/innovative-techniques-to-simplify-signups-and-logins/)
 
-    class EmailForm(Form):
-        email = TextField('Email', validators=[Required(), Email()])
+それでは、パスワードのリセットリンクへのアクセスを処理するビューを実装してみましょう。
 
-    class PasswordForm(Form):
-        password = PasswordField('Email', validators=[Required()])
+~~~ {language="Python"}
+# ourapp/views.py
 
-This code assumes that our password reset form just needs one field for
-the password. Many apps require the user to enter their new password
-twice to confirm that they haven't made a typo. To do this, we'd simply
-add another `PasswordField` and add the `EqualTo` WTForms validator to
-the main password field.
+from flask import redirect, url_for, render_template
 
-> **note**
->
-> There a lot of interesting discussions in the User Experience (UX)
-> community about the best way to handle this in sign-up forms. I
-> personally like the thoughts of one Stack Exchange user (Roger
-> Attrill) who said:
->
-> "We should not ask for password twice - we should ask for it once and
-> make sure that the 'forgot password' system works seamlessly and
-> flawlessly."
->
-> -   Read more about this topic in the [thread on the User Experience
->     Stack
->     Exchange](http://ux.stackexchange.com/questions/20953/why-should-we-ask-the-password-twice-during-registration/21141).
-> -   There are also some cool ideas for simplifying sign-up and sign-in
->     forms in an [article on Smashing Magazine
->     article](http://uxdesign.smashingmagazine.com/2011/05/05/innovative-techniques-to-simplify-signups-and-logins/).
+from . import app
+from .forms import EmailForm
+from .models import User
+from .util import send_email, ts
 
-Now we'll implement the first view of our process, where a user can
-request that a password reset link be sent for a given email address.
+@app.route('/reset', methods=["GET", "POST"])
+def reset():
+    form = EmailForm()
+    if form.validate_on_submit()
+        user = User.query.filter_by(email=form.email.data).first_or_404()
 
-    # ourapp/views.py
+        subject = "Password reset requested"
 
-    from flask import redirect, url_for, render_template
+        # Here we use the URLSafeTimedSerializer we created in `util` at the 
+        # beginning of the chapter
+        token = ts.dumps(self.email, salt='recover-key')
 
-    from . import app
-    from .forms import EmailForm
-    from .models import User
-    from .util import send_email, ts
+        recover_url = url_for(
+            'reset_with_token',
+            token=token,
+            _external=True)
 
-    @app.route('/reset', methods=["GET", "POST"])
-    def reset():
-        form = EmailForm()
-        if form.validate_on_submit()
-            user = User.query.filter_by(email=form.email.data).first_or_404()
+        html = render_template(
+            'email/recover.html',
+            recover_url=recover_url)
 
-            subject = "Password reset requested"
+        # Let's assume that send_email was defined in myapp/util.py
+        send_email(user.email, subject, html)
 
-            # Here we use the URLSafeTimedSerializer we created in `util` at the 
-            # beginning of the chapter
-            token = ts.dumps(self.email, salt='recover-key')
-
-            recover_url = url_for(
-                'reset_with_token',
-                token=token,
-                _external=True)
-
-            html = render_template(
-                'email/recover.html',
-                recover_url=recover_url)
-
-            # Let's assume that send_email was defined in myapp/util.py
-            send_email(user.email, subject, html)
-
-            return redirect(url_for('index'))
-        return render_template('reset.html', form=form)
+        return redirect(url_for('index'))
+    return render_template('reset.html', form=form)
+~~~
 
 When the form receives an email address, we grab the user with that
 email address, generate a reset token and send them a password reset
