@@ -429,7 +429,7 @@ typoを避けるために新しいパスワードを2回入力させるアプリ
 
     [Smashing Magazineの記事](http://uxdesign.smashingmagazine.com/2011/05/05/innovative-techniques-to-simplify-signups-and-logins/)
 
-それでは、パスワードのリセットリンクへのアクセスを処理するビューを実装してみましょう。
+それでは、まず初めに入力したメールアドレスにパスワードのリセットメールを送信するビューを実装してみましょう。
 
 ~~~ {language="Python"}
 # ourapp/views.py
@@ -469,63 +469,65 @@ def reset():
     return render_template('reset.html', form=form)
 ~~~
 
-When the form receives an email address, we grab the user with that
-email address, generate a reset token and send them a password reset
-URL. That URL routes them to a view that will validate the token and let
-them reset the password.
+フォームに入力されたメールアドレスを受け取ると、データベースからユーザーオブジェクトを取得します。
+その後リセットトークンを生成し、パスワードリセットURLを送信します。
+そのURLに対応するビュートークンを検証し、パスワードをリセットします。
 
-    # ourapp/views.py
+~~~ {language="Python"}
+# ourapp/views.py
 
-    from flask import redirect, url_for, render_template
+from flask import redirect, url_for, render_template
 
-    from . import app, db
-    from .forms import PasswordForm
-    from .models import User
-    from .util import ts
+from . import app, db
+from .forms import PasswordForm
+from .models import User
+from .util import ts
 
-    @app.route('/reset/<token>', methods=["GET", "POST"])
-    def reset_with_token(token):
-        try:
-            email = ts.loads(token, salt="recover-key", max_age=86400)
-        except:
-            abort(404)
+@app.route('/reset/<token>', methods=["GET", "POST"])
+def reset_with_token(token):
+    try:
+        email = ts.loads(token, salt="recover-key", max_age=86400)
+    except:
+        abort(404)
 
-        form = PasswordForm()
+    form = PasswordForm()
 
-        if form.validate_on_submit():
-            user = User.query.filter_by(email=email).first_or_404()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=email).first_or_404()
 
-            user.password = form.password.data
+        user.password = form.password.data
 
-            db.session.add(user)
-            db.session.commit()
+        db.session.add(user)
+        db.session.commit()
 
-            return redirect(url_for('signin'))
+        return redirect(url_for('signin'))
 
-        return render_template('reset_with_token.html', form=form, token=token)
+    return render_template('reset_with_token.html', form=form, token=token)
+~~~
 
-We're using the same token validation method as we did to confirm the
-user's email address. The view passes the token from the URL back into
-the template. Then the template uses the token to submit the form to the
-right URL. Let's have a look at what that template might look like.
+ここでも前回メールアドレスを検証したのと同じ方法でトークンを検証しています。
+ビューはまずURLに含まれるトークンをそのままテンプレートに渡します。
+そしてテンプレートはそのトークンを利用してフォームをレンダリングします。
+テンプレートは以下のようになります。
 
-    {# ourapp/templates/reset_with_token.html #}
+~~~ {language="Python"}
+{# ourapp/templates/reset_with_token.html #}
 
-    {% extends "layout.html" %}
+{% extends "layout.html" %}
 
-    {% block body %}
-    <form action="{{ url_for('reset_with_token', token=token) }}" method="POST">
-        {{ form.password.label }}: {{ form.password }}<br>
-        {{ form.csrf_token }}
-        <input type="submit" value="Change my password" />
-    </form>
-    {% endblock %}
+{% block body %}
+<form action="{{ url_for('reset_with_token', token=token) }}" method="POST">
+    {{ form.password.label }}: {{ form.password }}<br>
+    {{ form.csrf_token }}
+    <input type="submit" value="パスワード変更" />
+</form>
+{% endblock %}
+~~~
 
 ## まとめ
 - メールアドレスを確認するためのトークンを生成したり検証するにはitsdangerousパッケージを利用してください。
 - アカウントの作成や、メールアドレスの変更、パスワードを忘れた時にもこのトークンを利用してメールアドレスを検証することが出来ます。
--   Authenticate users using the Flask-Login extension to avoid dealing
-    with a bunch of session management stuff yourself.
--   Always think about how a malicious user could abuse your app to do
-    things that you didn't intend.
+- ユーザーの認証処理はセッション管理を自前で実装するのではなくFlask-Loginを利用してください。
+- 悪意あるユーザーがあなたの意図しない事を出来てしまわないか常に注意しましょう。
+
 
