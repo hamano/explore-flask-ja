@@ -1,99 +1,76 @@
-Deployment
-==========
+# 配備
 
-![Deployment](images/deployment.png)
+![配備](images/deployment.png)
 
-We're finally ready to show our app to the world. It's time to deploy.
-This process can be a pain because there are so many moving parts. There
-are a lot of choices to make when it comes to our production stack as
-well. In this chapter, we're going to talk about some of the important
-pieces and some of the options we have with each.
+私達のアプリを全世界に公開する準備が出来ました。
+配備の時間です。
+この手続きはには多くの要素が関わってきますのでややこしいです。
+製品スタックを決めるためには多くの選択肢があります。
+この章では重要な要素と幾つかの選択肢を紹介します。
 
-The Host
---------
+## ホスト
 
-We're going to need a server somewhere. There are thousands of providers
-out there, but these are the three that I personally recommend. I'm not
-going to go over the details of how to get started with them, because
-that's out of the scope of this book. Instead I'll talk about their
-benefits with regards to hosting Flask applications.
+まずどこかにサーバーを用意する必要があるでしょう。
+サーバープロバイダーは数多くありますが、ここでは個人的に気に入っている3つを紹介します。
+この本の対象外ですのでサービスの利用方法について最初から説明しませんが、
+Flaskアプリケーションを配備する上での優位点についてお話しようと思います。
 
 ### Amazon Web Services EC2
 
-Amazon Web Services is a collection of services provided by ... Amazon!
-There's a good chance that you've heard of them before as they're
-probably the most popular choice for new startups these days. The AWS
-service that we're most concerned with here is EC2, or Elastic Compute
-Cloud. The big selling point of EC2 is that we get virtual servers - or
-**instances** as they're called in AWS parlance - that spin up in
-seconds. If we need to scale our app quickly it's just a matter of
-spinning up a few more EC2 instances for our app and sticking them
-behind a load balancer (we can even use the AWS Elastic Load Balancer).
+Amazon Web Services(AWS)はAmazonが提供するサービスの総称です。
+スタートアップ企業にとって最も一般的な選択肢という話はどこかで聞いたことがあると思います。
+このAWSの中でも今回関係するのはElastic Compute Cloud(EC2)です。
+EC2の最大の特徴はAWS用語でインスタンスと呼ばれる仮想サーバーを数秒で立ち上げられる所です。
+もしも急にアプリケーションを拡張しなくてはならない場合でも追加のEC2インスタンスを立ち上げロードバランサ(AWS Elastic Load Balancer)の下に配備することが出来ます。
 
-With regards to Flask, AWS is just a regular old virtual server. We can
-spin it up with our favorite linux distro and install our Flask app and
-our server stack without much overhead. It means that we're going to
-need a certain amount of systems administration knowledge though.
+Flaskに関して言っておくと、
+AWSは標準的な仮想サーバーですのでお気に入りのLinuxディストリビューションを起動してFlaskアプリケーションを動かすことは簡単に出来ます。
+しかしこれはある程度のシステム管理に関する知識が必要になるでしょう。
 
 ### Heroku
 
-Heroku is an application hosting service that is built on top of AWS
-services like EC2. They let us take advantage of the convenience of EC2
-without the requisite systems administration experience.
+HerokuはAWS上に構築されたアプリケーションホスティングサービスです。
+ECと比較するとサーバー管理に関する経験が必要無いというメリットがあります。
 
-With Heroku, we deploy our application with a `git push` to their
-server. This is really convenient when we don't want to spend our time
-SSHing into a server, installing and configuring software and coming up
-with a sane deployment procedure. This convenience comes at a price of
-course, though both AWS and Heroku offer a certain amount of free
-service.
+Herokuでは`git push`を実行してアプリケーションをサーバーに配備します。
+これはサーバーにSSHしてあれこれソフトウェアをインストールしたりアプリケーションの配備方法を考えるのに時間を掛けたく無い場合にはとても便利です。
+この便利さには当然お金がかかりますが、AWSもHerokuも一定の規模であれば無料で利用することが出来ます。
 
-> **note**
->
-> Heroku has a [tutorial on deploying
-> Flask](https://devcenter.heroku.com/articles/getting-started-with-python)
-> with their service.
+**注記**
+HerokuにFlaskアプリケーションを配備するためのチュートリアルはこちらに用意されています。
 
-> **note**
->
-> Administrating your own databases can be time consuming and doing it
-> well requires some experience. It's great to learn about database
-> administration by doing it yourself for your side projects, but
-> sometimes you'd like to save time and effort by outsourcing that part
-> to professionals.
->
-> Both Heroku and AWS have database management offerings. I don't have
-> personal experience with either yet, but I've heard great things. It's
-> worth considering if you want to make sure your data is being secured
-> and backed-up without having to do it yourself.
->
-> -   [Heroku Postgres](https://www.heroku.com/postgres)
-> -   [Amazon RDS](https://aws.amazon.com/rds/)
+  - [tutorial on deploying Flask](https://devcenter.heroku.com/articles/getting-started-with-python)
+
+**注記**
+
+自分でデーターベースを管理しようとするとある程度の経験が必要で、手間も掛かります。
+データーベースの管理について学ぶことは素晴らしい事ですが、時にはアウトソーシングする事で手間と時間を節約しても良いでしょう。
+
+HerokuとAWSは両方データーベース管理機能を提供しています。
+私はまだ使った事はありませんが、非常に素晴らしいものだという評判を聞いています。
+自分自身でデータの安全性を高めたりバックアップをしたくない場合はこれを検討してみても良いでしょう。
+
+-   [Heroku Postgres](https://www.heroku.com/postgres)
+-   [Amazon RDS](https://aws.amazon.com/rds/)
 
 ### Digital Ocean
 
-Digital Ocean is an EC2 competitor that has recently begun to take off.
-Like EC2, Digital Ocean lets us spin up virtual servers - now called
-**droplets** - quickly. All droplets run on SSDs, which isn't something
-we get at the lower levels of EC2. The biggest selling point for me
-personally is an interface that is far simpler and easier to use than
-the AWS control panel. Digital Ocean is my preference for hosting and I
-recommend that you take a look at them.
+Digital Oceanは最近始まったEC2の競合サービスです。
+EC2の様に、Digital Oceanでも**droplets**と呼ばれる仮想サーバーを瞬時に起動できます。
+全てのdropletsはSSDで動作しEC2に劣る所はありません。
+個人的に最も大きな利点だと思うのは管理インターフェースがAWSのコントロールパネルよりも単純で使いやすい所です。
+Digital Oceanは個人的に私の好みですので、一度見てみることをオススメします。
 
-The Flask deployment experience on Digital Ocean is roughly the same as
-on EC2. We're starting with a clean linux distribution and installing
-our server stack from there.
+Digital OceanにFlaskアプリケーションを配備する方法はEC2と大体同じです。
+まっさらなLinuxディストリビューションにソフトウェアスタックとFlaskアプリケーションをインストールするだけです。
 
-> **note**
->
-> Digital Ocean was nice enough to make a contribution to the
-> Kickstarter campaign for *Explore Flask*. With that said, I promise
-> that my recommendation comes from my own experience as a user. If I
-> didn't like them, I wouldn't have asked them to pledge in the first
-> place.
+**注記**
 
-The stack
----------
+Digital Oceanはこの本のキックスターターキャンペーンを運用するのに十分適していました。
+ですので私のユーザーとしての経験から自身を持ってオススメできます。
+もし気に入ってなかったらこの本で取り上げていなかったでしょう。
+
+## スタック
 
 This section will cover some of the software that we'll need to install
 on our server to serve our Flask application to the world. The basic
