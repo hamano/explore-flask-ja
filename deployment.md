@@ -70,71 +70,72 @@ Digital Oceanはこの本のキックスターターキャンペーンを運用�
 ですので私のユーザーとしての経験から自身を持ってオススメできます。
 もし気に入ってなかったらこの本で取り上げていなかったでしょう。
 
-## スタック
+## ソフトウェアスタック
 
-This section will cover some of the software that we'll need to install
-on our server to serve our Flask application to the world. The basic
-stack is a front server that reverse proxies requests to an application
-runner that is running our Flask app. We'll usually have a database too,
-so we'll talk a little about those options as well.
+ここではFlaskアプリケーションを動作させる為に必要なソフトウェアスタックについて説明します。
+基本的なソフトウェアスタックはフロントWEBサーバーがバックエンドのFlaskアプリケーションランナーにリバースプロキシーを行うという構成です。
+通常はデータベースも動いているでしょうからこれについて少し説明します。
 
-### Application runner
+### アプリケーションランナー
 
-The server that we use to run Flask locally when we're developing our
-application isn't good at handling real requests. When we're actually
-serving our application to the public, we want to run it with an
-application runner like Gunicorn. Gunicorn handles requests and takes
-care of complicated things like threading.
+私達が開発時にローカルで実行しているFalskのサーバーはあまり多くのリクエストの処理を処理することは出来ません。
+実際にアプリケーションを公開する際はGunicornの様なアプリケーションランナーで動作させることになります。
+Gunicornはスレッドなどを管理していますので多くのリクエストを処理することが出来ます。
 
-To use Gunicorn, we install the `gunicorn` package in our virtual
-environment with Pip. Running our app is a simple command away.
+Gunicornを利用するにはvirtualenv環境で`gunicorn`をpipでインストールします。
+単純なコマンドでアプリケーションを実行することができます。
 
-    # app.py
+~~~ {language="Python"}
+# app.py
 
-    from flask import Flask
+from flask import Flask
 
-    app = Flask(__name__)
+app = Flask(__name__)
 
-    @app.route('/')
-    def index():
-            return "Hello World!"
+@app.route('/')
+def index():
+        return "Hello World!"
+~~~
 
-A fine app indeed. Now, to serve it up with Gunicorn, we simply run the
-`gunicorn` command.
+最小のFlaskアプリケーションを用意しました。
+これをGunicornで動作させるには以下のように`gunicorn`コマンドを実行します。
 
-    (ourapp)$ gunicorn rocket:app
-    2014-03-19 16:28:54 [62924] [INFO] Starting gunicorn 18.0
-    2014-03-19 16:28:54 [62924] [INFO] Listening at: http://127.0.0.1:8000 (62924)
-    2014-03-19 16:28:54 [62924] [INFO] Using worker: sync
-    2014-03-19 16:28:54 [62927] [INFO] Booting worker with pid: 62927
+~~~ {language="Python"}
+(ourapp)$ gunicorn rocket:app
+2014-03-19 16:28:54 [62924] [INFO] Starting gunicorn 18.0
+2014-03-19 16:28:54 [62924] [INFO] Listening at: http://127.0.0.1:8000 (62924)
+2014-03-19 16:28:54 [62924] [INFO] Using worker: sync
+2014-03-19 16:28:54 [62927] [INFO] Booting worker with pid: 62927
+~~~
 
-At this point, we should see "Hello World!" when we navigate our browser
-to *<http://127.0.0.1:8000>*.
+ここでブラウザで*<http://127.0.0.1:8000>*にアクセスすると「Hello World!」が表示されるでしょう。
 
-To run this server in the background (i.e. daemonize it), we can pass
-the `-D` option to Gunicorn. That way it'll run even after we close our
-current terminal session.
+サーバーをバックグラウンドで動作させるにはGunicornに`-D`オプションを渡してやります。
+これでターミナルを終了してもGunicornが動作し続けるようになります
 
-If we daemonize Gunicorn, we might have a hard time finding the process
-to close later when we want to stop the server. We can tell Gunicorn to
-stick the process ID in a file so that we can stop or restart it later
-without searching through lists of running processess. We use the
-`-p <file>` option to do that.
+Gunicornをバックグラウンドで動作させると、サーバーを停止させるのが面倒になるかもしれません。
+素早くプロセスを特定して停止するために、プロセスIDをファイルに書きだす様、Gunicornに指定できます。
+`-p <file>`オプションを利用してください。
 
-    (ourapp)$ gunicorn rocket:app -p rocket.pid -D
-    (ourapp)$ cat rocket.pid
-    63101
+~~~
+(ourapp)$ gunicorn rocket:app -p rocket.pid -D
+(ourapp)$ cat rocket.pid
+63101
+~~~
 
-To restart and kill the server, we can run `kill -HUP` and `kill`
-respectively.
+サーバーを再起動するには`kill -HUP`、停止するには`kill`コマンドを実行します。
 
-    (ourapp)$ kill -HUP `cat rocket.pid`
-    (ourapp)$ kill `cat rocket.pid`
+~~~
+(ourapp)$ kill -HUP `cat rocket.pid`
+(ourapp)$ kill `cat rocket.pid`
+~~~
 
-By default Gunicorn runs on port 8000. We can change the port by adding
-the `-b` bind option.
+Gunicornはデフォルトで8000ポートで動作します。
+これを変更するには`-b`オプションを指定してください。
 
-    (ourapp)$ gunicorn rocket:app -p rocket.pid -b 127.0.0.1:7999 -D
+~~~
+(ourapp)$ gunicorn rocket:app -p rocket.pid -b 127.0.0.1:7999 -D
+~~~
 
 #### Making Gunicorn public
 
