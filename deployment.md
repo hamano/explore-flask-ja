@@ -139,35 +139,30 @@ Gunicornはデフォルトで8000ポートで動作します。
 
 #### Making Gunicorn public
 
-> **warning**
->
-> Gunicorn is meant to sit behind a reverse proxy. If you tell it to
-> listen to requests coming in from the public, it makes an easy target
-> for denial of service attacks. It's just not meant to handle those
-> kinds of requests. Only allow outside connections for debugging
-> purposes and make sure to switch it back to only allowing internal
-> connections when you're done.
+**警告**
 
-If we run Gunicorn like we have in the listings, we won't be able to
-access it from our local system. That's because Gunicorn binds to
-127.0.0.1 by default. This means that it will only listen to connections
-coming from the server itself. This is the behavior that we want when we
-have a reverse proxy server that is sitting between the public and our
-Gunicorn server. If, however, we need to make requests from outside of
-the server for debugging purposes, we can tell Gunicorn to bind to
-0.0.0.0. This tells it to listen for all requests.
+Gunicornはリバースプロキシの背後に配置します。
+もしもフロントエンドに晒してしまうと、DoS攻撃の格好の餌食となってしまいます。
+デバッグ目的で直接接続する場合は十分注意してアクセス制御を行ってください。
 
-    (ourapp)$ gunicorn rocket:app -p rocket.pid -b 0.0.0.0:8000 -D
+先ほどのようにGunicornを実行した場合、ローカルシステムからしかアクセスすることができません。
+Gunicornはデフォルトで127.0.0.1をbindするからです。
+これはローカルシステムからのアクセスしか受け付けないことを意味しています。
+これはリバースプロキシサーバーが同一サーバーで動作している場合には望ましい動作です。
+もしGunicornで外部からの接続を受け付けたい場合は0.0.0.0をbindしてください。
+これで全てのアクセスを受け付けられる様になります。
 
-> **note**
->
-> -   Read more about running and deploying Gunicorn [in the
->     documentation](http://docs.gunicorn.org/en/latest/).
-> -   [Fabric](http://docs.fabfile.org/en/latest) is a tool that lets
->     you run all of these deployment and management commands from the
->     comfort of your local machine without SSHing into every server.
+~~~
+(ourapp)$ gunicorn rocket:app -p rocket.pid -b 0.0.0.0:8000 -D
+~~~
 
-### Nginx Reverse Proxy
+**注記**
+
+- Gunicornの実行方法と配備についてはこちらを参照してください。
+    - <http://docs.gunicorn.org/en/latest/>
+- [Fabric](http://docs.fabfile.org/en/latest)はサーバーにSSHせずにアプリケーションを配備したり管理することが出来るツールです。
+
+### Nginx リバースプロキシ
 
 A reverse proxy handles public HTTP requests, sends them back to
 Gunicorn and gives the response back to the requesting client. Nginx can
