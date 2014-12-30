@@ -164,40 +164,40 @@ Gunicornはデフォルトで127.0.0.1をbindするからです。
 
 ### Nginx リバースプロキシ
 
-A reverse proxy handles public HTTP requests, sends them back to
-Gunicorn and gives the response back to the requesting client. Nginx can
-be used very effectively as a reverse proxy and Gunicorn "strongly
-advises" that we use it.
+リバースプロキシはフロントエンドへのHTTPリクエストをバックエンドのGunicornに渡し、Gunicornからのレスポンスをクライアントに返します。
+Nginxはとても効率よくリバースプロキシを行えるため、GunicornはNginxを利用することを強く推奨しています。
 
-To configure Nginx as a reverse proxy to a Gunicorn server running on
-127.0.0.1:8000, we can create a file for our app:
-*/etc/nginx/sites-available/expl-oreflask.com*.
+127.0.0.1:8000で動作しているGunicornに対してNginxでリバースプロクシを行うには以下の設定ファイルを作成します:
 
-    # /etc/nginx/sites-available/exploreflask.com
+*/etc/nginx/sites-available/expl-oreflask.com*
 
-    # Redirect www.exploreflask.com to exploreflask.com
-    server {
-            server_name www.exploreflask.com;
-            rewrite ^ http://exploreflask.com/ permanent;
+~~~
+# /etc/nginx/sites-available/exploreflask.com
+
+# Redirect www.exploreflask.com to exploreflask.com
+server {
+    server_name www.exploreflask.com;
+    rewrite ^ http://exploreflask.com/ permanent;
+}
+
+# Handle requests to exploreflask.com on port 80
+server {
+    listen 80;
+    server_name exploreflask.com;
+
+    # Handle all locations
+    location / {
+        # Pass the request to Gunicorn
+        proxy_pass http://127.0.0.1:8000;
+
+        # Set some HTTP headers so that our app knows where the 
+        # request really came from
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
-
-    # Handle requests to exploreflask.com on port 80
-    server {
-            listen 80;
-            server_name exploreflask.com;
-
-                    # Handle all locations
-            location / {
-                            # Pass the request to Gunicorn
-                    proxy_pass http://127.0.0.1:8000;
-
-                    # Set some HTTP headers so that our app knows where the 
-                    # request really came from
-                    proxy_set_header Host $host;
-                    proxy_set_header X-Real-IP $remote_addr;
-                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            }
-    }
+}
+~~~
 
 Now we'll create a symlink to this file at */etc/nginx/sites-enabled*
 and restart Nginx.
