@@ -199,22 +199,21 @@ server {
 }
 ~~~
 
-Now we'll create a symlink to this file at */etc/nginx/sites-enabled*
-and restart Nginx.
+そして、このファイルを*/etc/nginx/sites-enabled*にシンボリックリンクを貼りNginxを再起動します。
 
-    $ sudo ln -s \
+~~~
+$ sudo ln -s \
     /etc/nginx/sites-available/exploreflask.com \
     /etc/nginx/sites-enabled/exploreflask.com
+~~~
 
-We should now be able to make our requests to Nginx and receive the
-response from our app.
+これでNginxへのリクエストが私達のアプリケーションに受け渡されるようになるはずです。
 
-> **note**
->
-> The [Nginx configuration
-> section](http://docs.gunicorn.org/en/latest/deploy.html#nginx-configuration)
-> in the Gunicorn docs will give you more information about setting
-> Nginx up for this purpose.
+**注記**
+
+The [Nginx configuration section](http://docs.gunicorn.org/en/latest/deploy.html#nginx-configuration)
+in the Gunicorn docs will give you more information about setting
+Nginx up for this purpose.
 
 #### ProxyFix
 
