@@ -211,47 +211,42 @@ $ sudo ln -s \
 
 **注記**
 
-The [Nginx configuration section](http://docs.gunicorn.org/en/latest/deploy.html#nginx-configuration)
-in the Gunicorn docs will give you more information about setting
-Nginx up for this purpose.
+- Nginxのセットアップについてはこちらにより詳しいドキュメントがあります。
+    - [Nginx configuration section](http://docs.gunicorn.org/en/latest/deploy.html#nginx-configuration)
 
 #### ProxyFix
 
-We may run into some issues with Flask not properly handling the proxied
-requests. It has to do with those headers we set in the Nginx
-configuration. We can use the Werkzeug ProxyFix to ... fix the proxy.
+Nginxでリバースプロキシを行うとリクエストの変数が期待通りにならない問題に遭遇するかもしれません。
+たとえば`REMOTE_ADDR`や`HTTP_HOST`などの変数です。
+これを修正するにはWerkzeug ProxyFixを利用してください。
 
-    # app.py
+~~~ {language="Python"}
+# app.py
 
-    from flask import Flask
+from flask import Flask
 
-    # Import the fixer
-    from werkzeug.contrib.fixers import ProxyFix
+# Import the fixer
+from werkzeug.contrib.fixers import ProxyFix
 
-    app = Flask(__name__)
+app = Flask(__name__)
 
-    # Use the fixer
-    app.wsgi_app = ProxyFix(app.wsgi_app)
+# Use the fixer
+app.wsgi_app = ProxyFix(app.wsgi_app)
 
-    @app.route('/')
-    def index():
-            return "Hello World!"
+@app.route('/')
+def index():
+    return "Hello World!"
+~~~
 
-> **note**
->
-> -   Read more about ProxyFix in [the Werkzeug
->     docs](http://werkzeug.pocoo.org/docs/contrib/fixers/#werkzeug.contrib.fixers.ProxyFix).
+**注記**
 
-Summary
--------
+- ProxyFixについての詳細はこちらを参照してください。
+    - [the Werkzeug docs](http://werkzeug.pocoo.org/docs/contrib/fixers/#werkzeug.contrib.fixers.ProxyFix)
 
--   Three good choices for hosting Flask apps are AWS EC2, Heroku and
-    Digital Ocean.
--   The basic deployment stack for a Flask application consists of the
-    app, an application runner like Gunicorn and a reverse proxy like
-    Nginx.
--   Gunicorn should sit behind Nginx and listen on 127.0.0.1 (internal
-    requests) not 0.0.0.0 (external requests).
--   Use Werkzeug's ProxyFix to handle the appropriate proxy headers in
-    your Flask application.
+## まとめ
+
+- AWS EC2やHeroku、Digital OceanでFlaskアプリケーションをホスティングするのは良い選択でしょう。
+- Flaskアプリケーションの基本的なソフトウェアスタックは、アプリケーション、Gunicornなどのアプリケーションランナー、Nginxのようなリバースプロキシで構成されます。
+- GunicornはNginxの背後に配置され、デフォルトで127.0.0.1をLISTENするので内部からのみのアクセスを受け付けます。
+- Flaskアプリケーションでプロキシーヘッダーを適切に処理するにはWerkzeugのProxyFixを利用してください。
 
