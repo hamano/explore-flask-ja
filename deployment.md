@@ -162,12 +162,12 @@ Gunicornはデフォルトで127.0.0.1をbindするからです。
     - <http://docs.gunicorn.org/en/latest/>
 - [Fabric](http://docs.fabfile.org/en/latest)はサーバーにSSHせずにアプリケーションを配備したり管理することが出来るツールです。
 
-### Nginx リバースプロキシ
+### NGINXリバースプロキシ
 
 リバースプロキシはフロントエンドへのHTTPリクエストをバックエンドのGunicornに渡し、Gunicornからのレスポンスをクライアントに返します。
-Nginxはとても効率よくリバースプロキシを行えるため、GunicornはNginxを利用することを強く推奨しています。
+NGINXはとても効率よくリバースプロキシを行えるため、GunicornはNGINXを利用することを強く推奨しています。
 
-127.0.0.1:8000で動作しているGunicornに対してNginxでリバースプロクシを行うには以下の設定ファイルを作成します:
+127.0.0.1:8000で動作しているGunicornに対してNGINXでリバースプロクシを行うには以下の設定ファイルを作成します:
 
 */etc/nginx/sites-available/expl-oreflask.com*
 
@@ -199,7 +199,7 @@ server {
 }
 ~~~
 
-そして、このファイルを*/etc/nginx/sites-enabled*にシンボリックリンクを貼りNginxを再起動します。
+そして、このファイルを*/etc/nginx/sites-enabled*にシンボリックリンクを貼りNGINXを再起動します。
 
 ~~~
 $ sudo ln -s \
@@ -207,11 +207,11 @@ $ sudo ln -s \
     /etc/nginx/sites-enabled/exploreflask.com
 ~~~
 
-これでNginxへのリクエストが私達のアプリケーションに受け渡されるようになるはずです。
+これでNGINXへのリクエストが私達のアプリケーションに受け渡されるようになるはずです。
 
 **注記**
 
-- Nginxのセットアップについてはこちらにより詳しいドキュメントがあります。
+- NGINXのセットアップについてはこちらにより詳しいドキュメントがあります。
     - [Nginx configuration section](http://docs.gunicorn.org/en/latest/deploy.html#nginx-configuration)
 
 #### ProxyFix
