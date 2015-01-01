@@ -100,7 +100,7 @@ def index():
 最小のFlaskアプリケーションを用意しました。
 これをGunicornで動作させるには以下のように`gunicorn`コマンドを実行します。
 
-~~~ {language="Python"}
+~~~ {language="command"}
 (ourapp)$ gunicorn rocket:app
 2014-03-19 16:28:54 [62924] [INFO] Starting gunicorn 18.0
 2014-03-19 16:28:54 [62924] [INFO] Listening at: http://127.0.0.1:8000 (62924)
@@ -117,7 +117,7 @@ Gunicornをバックグラウンドで動作させると、サーバーを停止
 素早くプロセスを特定して停止するために、プロセスIDをファイルに書きだす様、Gunicornに指定できます。
 `-p <file>`オプションを利用してください。
 
-~~~
+~~~ {language="command"}
 (ourapp)$ gunicorn rocket:app -p rocket.pid -D
 (ourapp)$ cat rocket.pid
 63101
@@ -125,7 +125,7 @@ Gunicornをバックグラウンドで動作させると、サーバーを停止
 
 サーバーを再起動するには`kill -HUP`、停止するには`kill`コマンドを実行します。
 
-~~~
+~~~ {language="command"}
 (ourapp)$ kill -HUP `cat rocket.pid`
 (ourapp)$ kill `cat rocket.pid`
 ~~~
@@ -133,7 +133,7 @@ Gunicornをバックグラウンドで動作させると、サーバーを停止
 Gunicornはデフォルトで8000ポートで動作します。
 これを変更するには`-b`オプションを指定してください。
 
-~~~
+~~~ {language="command"}
 (ourapp)$ gunicorn rocket:app -p rocket.pid -b 127.0.0.1:7999 -D
 ~~~
 
@@ -152,7 +152,7 @@ Gunicornはデフォルトで127.0.0.1をbindするからです。
 もしGunicornで外部からの接続を受け付けたい場合は0.0.0.0をbindしてください。
 これで全てのアクセスを受け付けられる様になります。
 
-~~~
+~~~ {language="command"}
 (ourapp)$ gunicorn rocket:app -p rocket.pid -b 0.0.0.0:8000 -D
 ~~~
 
@@ -171,7 +171,7 @@ NGINXはとても効率よくリバースプロキシを行えるため、Gunico
 
 */etc/nginx/sites-available/expl-oreflask.com*
 
-~~~
+~~~ {language="nginx.conf"}
 # /etc/nginx/sites-available/exploreflask.com
 
 # Redirect www.exploreflask.com to exploreflask.com
@@ -201,7 +201,7 @@ server {
 
 そして、このファイルを*/etc/nginx/sites-enabled*にシンボリックリンクを貼りNGINXを再起動します。
 
-~~~
+~~~ {language="command"}
 $ sudo ln -s \
     /etc/nginx/sites-available/exploreflask.com \
     /etc/nginx/sites-enabled/exploreflask.com
