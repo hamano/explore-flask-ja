@@ -191,7 +191,7 @@ generate_password_hash('password1', 12)
 
 UNIXの`time`コマンドで実行時間を計測できます。
 
-~~~
+~~~ {language="command"}
 $ time python test.py
 
 real    0m0.496s

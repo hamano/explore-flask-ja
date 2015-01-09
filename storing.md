@@ -92,7 +92,7 @@ SQLALCHEMY_DATABASE_URI = "postgresql://user:password@localhost/spaceshipDB"
 
 レポジトリの配下でPythonインタプリタを起動してみましょう。
 
-~~~
+~~~ {language="command"}
 $ pwd
 /Users/me/Code/myapp
 $ workon myapp
