@@ -1,0 +1,348 @@
+%%
+%% This is file `hamacro.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% hamacro.dtx  (with options: `package')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright (C) 2004-2014 HAMANO Tsukasa <hamano@cuspy.org>
+%% 
+%% Apache License
+%% Version 2.0, January 2004
+%% http://www.apache.org/licenses/
+%% 
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{hamacro}
+    [2004/11/05 v1.0 .dtx skeleton file]
+
+\usepackage[T1]{fontenc}
+\usepackage[deluxe]{otf}
+\usepackage[dvipdfmx]{graphicx}
+
+\usepackage[dvipdfmx]{color}
+\usepackage[dvipdfmx]{xcolor}
+\definecolor{lightgray}{HTML}{D3D3D3}
+\definecolor{gainsboro}{HTML}{DCDCDC}
+\definecolor{azure}{HTML}{F0FFFF}
+\definecolor{darkblue}{HTML}{00008B}
+\definecolor{midnightblue}{HTML}{191970}
+\definecolor{lightskyblue}{HTML}{87CEFA}
+\definecolor{olivegreen}{cmyk}{0.64,0,0.95,0.40}
+\definecolor{cadetblue}{cmyk}{0.62,0.57,0.23,0}
+\definecolor{brown}{cmyk}{0,0.81,1,0.60}
+
+\definecolor{lightgreen}{HTML}{90EE90}
+\definecolor{green}{HTML}{008000}
+\definecolor{darkgreen}{HTML}{006400}
+
+\usepackage[dvipdfm]{hyperref}
+\hypersetup{
+  setpagesize=false,
+  bookmarksnumbered=true,
+  colorlinks=true,
+  linkcolor=linkcolor,
+  citecolor=linkcolor,
+  filecolor=linkcolor,
+  urlcolor=linkcolor
+}
+
+\usepackage{pxjahyper}
+
+\usepackage{here}
+\usepackage{ctable}
+\usepackage{longtable}
+\usepackage{ulem}
+
+\colorlet{framerule}{gray}
+\colorlet{framebg}{gainsboro}
+\colorlet{linkcolor}{blue}
+
+\colorlet{accentcolor}{black}
+\colorlet{subcolor}{black}
+
+\DeclareOption{green}{
+  \colorlet{accentcolor}{green}
+  \colorlet{subcolor}{darkgreen}
+}
+\DeclareOption{blue}{
+  \colorlet{accentcolor}{lightskyblue}
+  \colorlet{subcolor}{midnightblue}
+}
+\ProcessOptions
+
+\setlength{\oddsidemargin}{-1truein}
+\addtolength{\oddsidemargin}{0.11\paperwidth}
+\setlength{\evensidemargin}{-1truein}
+\addtolength{\evensidemargin}{0.11\paperwidth}
+\setlength{\marginparwidth}{0.10\paperwidth}
+\setlength{\marginparsep}{0.005\paperwidth}
+\setlength{\textwidth}{\paperwidth}
+\addtolength{\textwidth}{-0.22\paperwidth}
+
+\message{^^J}
+\message{***** Layout Info *****^^J}
+\message{\hoffset: \the\hoffset^^J}
+\message{\voffset: \the\voffset^^J}
+\message{\paperwidth: \the\paperwidth^^J}
+\message{\paperheight: \the\paperheight^^J}
+\message{\textwidth: \the\textwidth^^J}
+\message{\textheight: \the\textheight^^J}
+\message{\oddsidemargin: \the\oddsidemargin^^J}
+\message{\evensidemargin: \the\evensidemargin^^J}
+\message{\marginparwidth: \the\marginparwidth^^J}
+\message{\marginparsep: \the\marginparsep^^J}
+\message{***********************^^J}
+
+\def\@maketitle{
+  \newpage
+  \null
+  \begin{center}
+    {\LARGE \@title \par}
+  \end{center}
+  \begin{flushright}
+    {\large \@date \par}
+    {\large \@author \par}
+  \end{flushright}
+  \vspace{0.5in}
+}
+
+\usepackage[Conny]{fncychap}
+\ChNameVar{\centering\Huge\sffamily\color{black}}
+\ChTitleAsIs
+\ChTitleVar{\centering\Huge\sffamily\color{black}}
+
+\renewcommand{\DOCH}{
+  \color{subcolor}
+  \mghrulefill{3\RW}\par\nobreak
+  \vskip -0.5\baselineskip
+  \mghrulefill{\RW}\par\nobreak
+  \CNV\FmN{\@chapapp}\space \CNoV\thechapter \postchaptername
+  \par\nobreak
+  \vskip -0.5\baselineskip
+}
+\renewcommand{\DOTI}[1]{
+  \color{subcolor}
+  \mghrulefill{\RW}\par\nobreak
+  \CTV\FmTi{#1}\par\nobreak
+  \vskip 60\p@
+}
+\renewcommand{\DOTIS}[1]{
+  \color{subcolor}
+  \mghrulefill{\RW}\par\nobreak
+  \CTV\FmTi{#1}\par\nobreak
+  \vskip 60\p@
+}
+
+\usepackage[explicit]{titlesec}
+\titleformat{name=\section}[block]
+{\gtfamily\bfseries\LARGE}
+{\color{subcolor}{\thesection} \color{black}{#1}}
+{1em}{}
+[\titleline{\color{subcolor}\titlerule[1.5pt]}]
+
+\titleformat{name=\section,numberless}[block]
+{\gtfamily\bfseries\LARGE}
+{#1}
+{1em}{}
+[\titleline{\color{subcolor}\titlerule[1.5pt]}]
+
+\titleformat{\subsection}[block]
+{\gtfamily\bfseries\Large\def\ULthickness{1.5pt}}
+{\color{subcolor}\uline{\thesubsection{} \color{black}{#1}}}
+{1em}{}
+
+\titleformat{name=\subsection,numberless}[block]
+{\gtfamily\bfseries\Large\def\ULthickness{1.5pt}}
+{\color{subcolor}\uline{\color{black}{#1}}}
+{1em}{}
+
+\titleformat{\subsubsection}[block]
+{\gtfamily\bfseries\large}
+{\color{subcolor}{\thesubsubsection} \color{black}{#1}}{10em}{}
+
+\titleformat{name=\subsubsection,numberless}[block]
+{\gtfamily\bfseries\large}
+{\color{black}{#1}}{10em}{}
+
+\let\origemph\emph
+\newcommand{\redemph}[1]
+           {\textcolor{red}{\underline{\origemph{\textcolor{black}{#1}}}}}
+
+\newcommand{\ulemph}[1]
+           {\textbf{\Underline{#1}}}
+
+\newcommand{\bouemph}[1]
+           {\origemph{\bou{#1}}}
+
+
+\usepackage{framed}
+\usepackage{anyfontsize}
+\newcommand{\bigquotemark}{
+  {\fontsize{32pt}{32pt}\selectfont \color{accentcolor} \textbf{``}}
+  \vskip -2.3em
+  \hskip 0.3zw
+}
+\renewenvironment{quote}{
+  \def\FrameCommand{
+    \fboxsep=\FrameSep
+    \fcolorbox{gray}{gainsboro}
+  }
+  \MakeFramed {\advance\hsize-\width \FrameRestore}
+  \parindent 0zw % quoteマークがインデント代わり
+  \vskip -.5em
+  \hskip -1zw
+  {\bigquotemark}
+}
+{
+  \smallskip
+  \endMakeFramed
+}
+
+\usepackage{fancyvrb}
+
+\renewenvironment{verbatim}{
+  \VerbatimEnvironment
+  \def\FrameCommand{
+    \fboxsep=4truept
+    \fcolorbox{gray}{gainsboro}
+  }
+  \MakeFramed{\advance\hsize-\width \FrameRestore}
+  \tt\fontsize{10.5truept}{1.2em}
+  \begin{Verbatim}}
+{
+  \end{Verbatim}
+  \endMakeFramed
+}
+
+\newenvironment{verbatim60}{
+  \VerbatimEnvironment
+  \def\FrameCommand{
+    \fboxsep=4truept
+    \fcolorbox{gray}{gainsboro}
+  }
+  \MakeFramed{\advance\hsize-\width \FrameRestore}
+  \tt\fontsize{14truept}{1.5em}
+  \begin{Verbatim}}
+{
+  \end{Verbatim}
+  \endMakeFramed
+}
+
+\newenvironment{verbatim40}{
+  \VerbatimEnvironment
+  \def\FrameCommand{
+    \fboxsep=4truept
+    \fcolorbox{gray}{gainsboro}
+  }
+  \MakeFramed{\advance\hsize-\width \FrameRestore}
+  \tt\fontsize{21truept}{21truept}
+  \begin{Verbatim}}
+{
+  \end{Verbatim}
+  \endMakeFramed
+}
+
+\usepackage{mdframed}
+\newenvironment{Shaded}{\begin{mdframed}}{\end{mdframed}}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\NormalTok}[1]{{#1}}
+
+\usepackage{upquote}
+\usepackage{listings,jlisting}
+\AtBeginDocument{
+  \def\lstlistingname{}
+  \def\thelstlisting{}
+}
+
+
+
+
+
+\mdfsetup{
+  linewidth=1truept,
+  linecolor=gray,
+  innerleftmargin=0.5zw,
+  innerrightmargin=0.5zw,
+  backgroundcolor=gainsboro
+}
+
+\BeforeBeginEnvironment{lstlisting}{
+  \begin{mdframed}
+}
+
+\AfterEndEnvironment{lstlisting}{
+  \end{mdframed}
+}
+
+\lstset{
+  frame=single,
+  rulecolor=\color{gainsboro},
+  backgroundcolor=\color{gainsboro},
+  framesep=0pt,
+  xleftmargin=0pt,
+  basicstyle=\fontsize{10.5truept}{1.2em}\tt,
+  belowskip=-0.5em,
+  identifierstyle=\color{black},
+  commentstyle=\color{brown},
+  keywordstyle=\color{olivegreen},
+  ndkeywordstyle=\color{red},
+  stringstyle=\color{purple},
+  showstringspaces=false,
+  breaklines=true,
+  columns=[l]{fullflexible}
+}
+
+\lstdefinestyle{command}{
+  language=command,
+  commentstyle=\color{black}
+}
+
+\lstdefinelanguage{command}
+{
+  morekeywords={\$},
+  otherkeywords={\#, \%}
+}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]\"
+}
+
+\lstdefinelanguage{httpd.conf}
+{
+  morekeywords={VirtualHost, Include, Directory, LogFormat, CustomLog},
+  morecomment=[l]{\#}
+}
+
+\lstdefinelanguage{nginx.conf}
+{
+  morekeywords={
+    server,server_name,listen,location,
+    rewrite,proxy_pass, proxy_set_header},
+  morecomment=[l]{\#}
+}
+
+\endinput
+%%
+%% End of file `hamacro.sty'.
