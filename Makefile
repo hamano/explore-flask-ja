@@ -1,6 +1,6 @@
 LATEX=platex
 #LATEX=uplatex
-LATEX_OPT=-shell-escape
+LATEX_OPT=-shell-escape -output-directory=tex
 #PANDOC=pandoc
 PANDOC=~/.cabal/bin/pandoc
 PANDOC_OPT=--toc --listings --chapters
@@ -8,10 +8,9 @@ DVIPDFMX=dvipdfmx
 DVIPDFMX_OPT=-f ptex-hiragino
 
 NAME=explore-flask-ja
-#TEMPLATE=$(NAME).tex
 TEMPLATE=template.tex
 
-SRCS=meta.yaml preface.md conventions.md environment.md organizing.md configuration.md views.md blueprints.md templates.md static.md storing.md forms.md users.md deployment.md conclusion.md
+SRCS=meta.yaml foreword.md preface.md conventions.md environment.md organizing.md configuration.md views.md blueprints.md templates.md static.md storing.md forms.md users.md deployment.md conclusion.md
 
 MD=$(NAME).md
 TEX=$(NAME).tex
@@ -31,7 +30,7 @@ all: pdf
 pdf: $(PDF)
 
 clean:
-	rm -rf *.log *.out *.aux *.toc $(MD) $(TEX) $(DVI) $(PDF) $(EPUB) $(HTML)
+	rm -rf tex $(MD) $(TEX) $(DVI) $(PDF) $(EPUB) $(HTML)
 
 $(MD): $(SRCS)
 	cat $^ > $@
@@ -42,9 +41,9 @@ $(EPUB): $(MD)
 $(HTML): $(MD)
 	$(PANDOC) -o $@ $<
 
-$(TEX): $(MD) $(TEMPLATE)
-	$(PANDOC) -f markdown -t latex $(PANDOC_OPT) --template=$(TEMPLATE) $< | sed -e 's/\[htbp\]/\[H\]/g' > $@
+tex/$(TEX): $(MD) $(TEMPLATE)
+	mkdir -p tex
+	$(PANDOC) -t latex $(PANDOC_OPT) --template=$(TEMPLATE) $< | sed -e 's/\[htbp\]/\[H\]/g' > $@
 
-$(DVI): $(TEX)
-
-$(PDF): $(DVI)
+tex/$(DVI): tex/$(TEX)
+$(PDF): tex/$(DVI)
