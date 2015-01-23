@@ -487,14 +487,10 @@ tests/
 できるだけ不必要なインポートを避けてください。
 これは忘れがちですがコードがより煩雑になり、最悪の場合アプリケーションが遅くなります。
 
-### ステップ4: Blueprint...ifi...cation or something
+### ステップ4: Blueprintを実装する
 
-This is the part where we turn our directories into blueprints. The key
-is in the *\_\_init\_\_.py* files. For starters, let's take a look at
-the definition of the API blueprint.
-
-ここではブループリントのディレクトリに移り、*\_\_init\_\_.py*ファイルを見ていきます。
-まずはブループリントのAPI呼び出しを見てみましょう。
+ここではブループリントのディレクトリに移り*\_\_init\_\_.py*を実装していきます。
+まずは以下の様にブループリントのAPIを呼び出してやります。
 
 ~~~ {language="Python"}
 # U2FtIEJsYWNr/api/__init__.py
