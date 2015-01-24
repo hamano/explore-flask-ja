@@ -50,16 +50,18 @@
 \end{titlepage}
 
 \frontmatter
+\let\thesectionorig\thesection
+\renewcommand{\thesection}{}
+\let\thesubsectionorig\thesubsection
+\renewcommand{\thesubsection}{}
 
 $if(toc)$
 \tableofcontents
 $endif$
 
-\mainmatter
 $body$
 
 %\clearpage
-\backmatter
 \thispagestyle{empty}
 \vspace*{\fill}
 
