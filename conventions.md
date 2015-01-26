@@ -1,3 +1,7 @@
+\mainmatter
+\let\thesection\thesectionorig
+\let\thesubsection\thesubsectionorig
+
 # コーディング規約
 
 ![コーディング規約](./images/conventions.png)
