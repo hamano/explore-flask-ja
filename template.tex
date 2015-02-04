@@ -39,11 +39,13 @@
 \begin{center}
 {\Huge\bf{$title$}}
 \smallskip\\
-{\Large\it{$subtitle$}}
+{\huge\it{$subtitle$}}
 \vspace{8em}\\
 {\Large\bf{$author$ 著}}
 \smallskip\\
 {\Large\bf{$translator$ 訳}}
+\vfill
+{\Large\bf{$publisher$ 発行}}
 
 \end{center}
 
@@ -61,7 +63,7 @@ $endif$
 
 $body$
 
-%\clearpage
+\clearpage
 \thispagestyle{empty}
 \vspace*{\fill}
 
@@ -75,6 +77,7 @@ $body$
 \begin{tabular}{ll}
 著者 & $author$ \\
 翻訳 & $translator$ \\
+出版 & $publisher$ \\
 \end{tabular}
 \bigskip\\
 \rule[0pt]{14cm}{1pt} \\
