@@ -82,8 +82,7 @@ from .models import User
 
 > パッケージの相対インポートを使ったら、1秒でパッケージ名を変更できたぜ
 > 
-> --- [David Beazley,
-> @dabeaz](https://twitter.com/dabeaz/status/372059407711887360)
+> --- David Beazley (https://twitter.com/dabeaz/status/372059407711887360)
 
 **注記**
 
