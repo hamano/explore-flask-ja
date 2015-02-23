@@ -183,7 +183,7 @@ templates/
 フィルターを利用して静的ファイルの前処理を行う事もできます。
 この機能は主にJavaScriptやCSSを最小化するのに役立ちます。
 
-~~~
+~~~ {language="Python"}
 # myapp/util/assets.py
 
 # [...]
