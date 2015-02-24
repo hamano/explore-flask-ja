@@ -33,7 +33,7 @@ PEP 8の目的はコードの可読性を高めることです。
 PEP 257は**docstrings**について記述しています。
 PEPを読んで頂いても構いませんが、以下の例を見ればdocstringがどの様なものか理解できるはずです。
 
-~~~ python
+~~~ {language="Python"}
 def launch_rocket():
    """ロケット発射関数
 
@@ -64,7 +64,7 @@ docstringsはSphinxなどのソフトウェアを利用してHTMLやPDFフォー
 します。
 以下に例を示します。
 
-~~~ python
+~~~ {language="Python"}
 # myapp/views.py
 
 # An absolute import gives us the User model
