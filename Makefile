@@ -33,7 +33,7 @@ clean:
 	rm -rf tex $(MD) $(TEX) $(DVI) $(PDF) $(EPUB) $(HTML)
 
 $(MD): $(SRCS)
-	cat $^ > $@
+	sed -e 's|^//note\[\(.*\)\]{|**\1**|g' -e 's|^//}||g' $^ > $@
 
 $(EPUB): $(MD)
 	$(PANDOC) -o $@ $<
