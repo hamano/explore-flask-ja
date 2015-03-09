@@ -2,9 +2,9 @@
 
 ![テンプレート](images/templates.png)
 
-Flaskは特定のテンプレート言語を強制しませんが、ここではJinjaを使うことにします。
-Flaskコミュニティでは殆どの開発者がJinjaテンプレートを利用しているので私はJinjaを推奨します。
-他のテンプレート言語を利用するFlask拡張には[Flask-Genshi](http://pythonhosted.org/Flask-Genshi/) や [Flask-Mako](http://pythonhosted.org/Flask-Mako/) などがあります。
+Flaskは特定のテンプレート言語を強制しませんが、この本ではJinjaを使うことにします。
+Flaskコミュニティでは殆どの開発者がJinjaテンプレートを利用しているので私もJinjaを推奨しています。
+他のテンプレート言語を利用するFlask拡張には[Flask-Genshi](http://pythonhosted.org/Flask-Genshi/)や[Flask-Mako](http://pythonhosted.org/Flask-Mako/) などがあります。
 特に理由が無い限りデフォルトのJinjaテンプレートを利用してください。
 シンタックスをよく知らなくても構いません。
 これが一番手っ取り早いです。
