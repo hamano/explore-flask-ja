@@ -26,3 +26,7 @@ if __name__ == "__main__":
 
 本書はFlaskを利用する上での一般的な利用方法をサンプルコードと一緒に例示してくれるのでこれから初めてFlaskを使ってみようという方の助けになるはずです。
 
+本書の原稿はGitHub上で公開しています。
+誤訳、誤りなどありましたらPull Requestをいただければ幸いです。
+
+<https://github.com/hamano/explore-flask-ja>
