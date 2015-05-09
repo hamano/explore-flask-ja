@@ -69,7 +69,7 @@ class Engine(db.Model):
 エンジンはIDと名前、推進力レベルを持ちます。
 
 あと幾つかデータベースに関する設定を行う必要があります。
-機密情報を含む設定をバージョン管理システムから除外する為に、インスタンスフォルダー内の*instance/config.py*に設定を記述します。
+機密情報を含む設定をバージョン管理システムから除外するために、インスタンスフォルダー内の*instance/config.py*に設定を記述します。
 
 ~~~ {language="Python"}
 # instance/config.py
@@ -175,7 +175,7 @@ Alembicの設定や移行スクリプトの詳細は[Alembicのチュートリ�
 **注記**
 
 FlaskでNoSQLを扱う方法はあまり確立されていませんが、データベースにアクセスするPythonライブラリさえあれば利用できるはずです。
-こちらの[Flask extension registry](http://flask.pocoo.org/extensions/)にNoSQLデーターベースを扱う為のFlask拡張がいくつかあります。
+こちらの[Flask extension registry](http://flask.pocoo.org/extensions/)にNoSQLデーターベースを扱うためのFlask拡張がいくつかあります。
 
 ## まとめ
 

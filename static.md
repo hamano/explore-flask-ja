@@ -57,7 +57,7 @@ WEBブラウザはデフォルトで*example.com/favicon.ico*というURLでfavi
 ## Flask-Assetsによる静的ファイルの管理
 Flask-Assetsは静的ファイルを管理するためのFlask拡張です。
 Flask-Assetsは2つの非常に便利なツールを提供します。
-1つ目はテンプレートに静的ファイルを一括して挿入する為の*バンドル*を定義する機能です。
+1つ目はテンプレートに静的ファイルを一括して挿入するための*バンドル*を定義する機能です。
 2つ目は静的ファイルを*前処理*する機能です。
 これによりCSSやJavaScriptの結合と最小化を行い、通信時間を最小化できます。
 JavaScriptだけでなく、SassやLESS、CoffeeScriptなどのソースを処理することも可能です。
@@ -142,7 +142,7 @@ from .util import assets
 
 ### バンドルの利用方法
 
-adminバンドルを利用する為に、*admin/layout.html*という親テンプレートを追加します。
+adminバンドルを利用するために、*admin/layout.html*という親テンプレートを追加します。
 
 ~~~
 templates/
