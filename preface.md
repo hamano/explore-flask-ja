@@ -30,7 +30,7 @@ Python Software Foundationの公式な立場は以下の通りです。[^0-1]
 Flaskのバージョン0.10以降であればPython 3.3で動作します。しかし、Armin Ronacherに尋ねてみると、まだ完全に推奨できないという返答がありました。
 
 > 私自身まだPython3を利用していませんので、現状では一般ユーザーにも
-> Python3推奨することは出来ません。
+> Python3を推奨することは出来ません。
 >
 > --- Armin Ronacher(Flaskの開発者)
 
