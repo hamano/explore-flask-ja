@@ -58,7 +58,7 @@ POSTリクエストがサーバーに送られてくると、フォームデー�
 
 **注記**
 
-- WTFormsが生成するトークンについての詳細は[こちらのドキュメント](http://wtforms.simplecodes.com/docs/1.0.1/ext.html#module-wtforms.ext.csrf.session)を参照してください。
+- WTFormsが生成するトークンについての詳細は[こちらのドキュメント](https://wtforms.readthedocs.io/en/stable/ext.html#module-wtforms.ext.csrf.session)を参照してください。
 - CSRFについてもっと学ぶには[OWASP wiki](https://www.owasp.org/index.php/CSRF)を読んでください。
 
 Flask-WTFを利用してCSRF対策を行うには、ログインページのビュー以下のように定義します。
@@ -89,7 +89,7 @@ def login():
 
 **注記**
 
--   [Form.validate\_on\_submitのドキュメント](https://flask-wtf.readthedocs.org/en/latest/api.html#flask_wtf.Form.validate_on_submit)
+-   [Form.validate\_on\_submitのドキュメント](https://flask-wtf.readthedocs.io/en/stable/api.html#flask_wtf.Form.validate_on_submit)
 -   [Form.validate\_on\_submitのソース](https://github.com/lepture/flask-wtf/blob/v0.9.5/flask_wtf/form.py#L151)
 
 正しく検証が通ればログイン処理を継続することが出来ます。
@@ -124,7 +124,7 @@ Flask-WTFのCSRFトークンはフォーム送信以外のリクエストの保�
 
 **注記**
 
-詳しくは[Flask-WTFのドキュメント](https://flask-wtf.readthedocs.org/en/latest/csrf.html#ajax)を参照してください。
+詳しくは[Flask-WTFのドキュメント](https://flask-wtf.readthedocs.io/en/stable/csrf.html#ajax)を参照してください。
 
 ### カスタムバリデーター
 
@@ -242,7 +242,7 @@ HTML属性の「class」を指定したい時は、`class_=''`という引き数
 
 **注記**
 
-WTFormsのドキュメントに[利用可能なフィールドプロパティの一覧](http://wtforms.simplecodes.com/docs/1.0.4/fields.html#wtforms.fields.Field.name)があります。
+WTFormsのドキュメントに[利用可能なフィールドプロパティの一覧](https://wtforms.readthedocs.io/en/stable/fields.html#wtforms.fields.Field.name)があります。
 
 **注記**
 
